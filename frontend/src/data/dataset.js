@@ -705,7 +705,7 @@ export function getWords(lang) {
       .then(response => response.words)
     }
 
-    return data[lang];
+    return Promise.resolve(data[lang]);
 }
 
 

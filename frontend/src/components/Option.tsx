@@ -10,7 +10,7 @@ options: an object of the format { "optionValueHere": { display: "optionDisplayN
     ex. { "es": { display: "Spanish" } }
 setOption: the state modifier function for this setting
 */
-export default function Option({displayText, options, setOption}) {
+export default function Option({displayText, options, setOption}: {displayText: any, options: any, setOption: any}) {
     return ( <div className="m-6">
         <p className="text-xl">{displayText}</p>
         <div className="flex gap-5">

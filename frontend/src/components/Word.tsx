@@ -13,7 +13,7 @@ enum display { DEF = "definition", DESC = "description" };
 
 
 
-export default function Word({word}) {
+export default function Word({word}: {word: any}) {
     // state
     const [expanded, setExpanded] = React.useState(false);
     const toggleExpanded = () => { setExpanded(!expanded) };

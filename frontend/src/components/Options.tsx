@@ -7,7 +7,7 @@ import options from '../data/options';
 The collapsable options menu
 setLang: state modifier for language
 */
-export default function Options({setLang}) {
+export default function Options({setLang}: {setLang: any}) {
     const [expanded, setExpanded] = React.useState(false);
 
     return ( <div className="bg-slate-200 transition-all duration-150 relative" style={{

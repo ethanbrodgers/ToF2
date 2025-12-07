@@ -54,9 +54,9 @@ const colorMap = {
     }
 }
 
-export default function WordFlag({attr, val}) {
-    const text = textMap[attr][val];
-    const color = colorMap[attr][val];
+export default function WordFlag({attr, val}: {attr: any, val: any}) {
+    const text = textMap[attr as any][val as any];
+    const color = colorMap[attr as any][val as any];
     return ( <p
         className={`w-min rounded-xl border border-gray-600 px-1 ${color}`}
     >
