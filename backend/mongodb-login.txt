@@ -1,0 +1,5 @@
+ethanbrodgers
+YpC7ePjFA5OYfaf5
+
+connection string: mongodb+srv://ethanbrodgers:YpC7ePjFA5OYfaf5@personal.ixiji9y.mongodb.net/?appName=personal
+potential driver installation: python -m pip install "pymongo[srv]"
