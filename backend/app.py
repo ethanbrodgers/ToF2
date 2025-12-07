@@ -40,24 +40,28 @@ def greet_with_query_param():
     name = request.args.get("name")
     return jsonify({"message": f"Hello {name}!"})
 
-# word lookup by en
+
+# word lookup
 @app.route("/vocab", methods=["GET"])
 def word_lookup_query_param():
+    # get potential args
     en = request.args.get("en")
+    lang = request.args.get("lang")
+
+    # construct query
+    query = {}
     if en:
-        # search by en
-        word = word_collection.find_one({"en": en})
-        if word:
-            word["_id"] = str(word["_id"])
-            return jsonify({"word": word})
-        else:
-            return jsonify({"error": "word not found"}), 404
-    else:
-        # get all
-        words = list(word_collection.find())
-        for word in words:
-            word["_id"] = str(word["_id"])
-        return jsonify({"words": words})
+        query["en"] = en
+    if lang:
+        query["lang"] = lang
+
+    # get words
+    words = list(word_collection.find(query))
+    for word in words:
+        word["_id"] = str(word["_id"])
+
+    # return
+    return jsonify({"words": words})
 
 
 if __name__ == "__main__":
