@@ -20,25 +20,10 @@ word_collection = db["words"]
 
 # === ROUTES ===
 
-# test
+# test (don't delete)
 @app.route("/")
 def home():
-    return jsonify({"message": "This is my first Flask backend"})
-
-# greet
-@app.route("/greet", methods=["POST"])
-def greet_with_body():
-    req_body = request.get_json()
-    return jsonify({"message": f"Hello {req_body.get('name')}!"})
-
-@app.route("/greet/<name>", methods=["GET"])
-def greet_with_url_param(name):
-    return jsonify({"message": f"Hello {name}!"})
-
-@app.route("/greet", methods=["GET"])
-def greet_with_query_param():
-    name = request.args.get("name")
-    return jsonify({"message": f"Hello {name}!"})
+    return jsonify({"message": "ToF2 backend is running"})
 
 
 # word lookup
