@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
-import ViewPage from './pages/view/components/ViewPage';
+import ViewPage from './pages/view/ViewPage';
 
 
 /*

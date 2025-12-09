@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Word from './Word';
-import { getWords } from '../../../services/api';
+import { getWords } from '../../services/api';
 
 /*
 Displays vocabulary words for current language if activated
