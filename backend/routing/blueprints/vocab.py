@@ -1,4 +1,4 @@
-# routes.py: define routes
+# vocab.py: blueprint for routes related to vocabulary words
 
 from flask import Blueprint, request, jsonify
 from ..utils import serialize_list
