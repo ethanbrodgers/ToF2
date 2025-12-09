@@ -5,7 +5,7 @@ import WordFlag from "./WordFlag";
 
 /*
 Displays a word and all relevant data in Vocab
-word: object formatted as it appears in dataset.js
+word: see word schema
 */
 
 // possible attributes of word to display
