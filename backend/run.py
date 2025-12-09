@@ -1,10 +1,10 @@
-# app.py: app initialization
-
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-from routes import bp # blueprint
+from services.db import db
+# blueprints
+from routing.register_all_bp import register_all_bp
 
 # load env
 load_dotenv()
@@ -16,12 +16,7 @@ app = Flask(__name__)
 CORS(app)
 
 # register endpoints from blueprint
-app.register_blueprint(bp)
+register_all_bp(app, db)
 
-# run
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.getenv("PORT", 5000)))
-
-
-
-
