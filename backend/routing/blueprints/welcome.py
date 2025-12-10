@@ -2,14 +2,11 @@
 
 from flask import Blueprint, jsonify
 
-def create_welcome_bp():
-    bp = Blueprint("welcome", __name__)
+bp = Blueprint("welcome", __name__)
 
-    @bp.route("/", methods=["GET"])
-    def welcome():
-        return jsonify({"message": "ToF2 backend is running"})
+@bp.route("/", methods=["GET"])
+def welcome():
+    return jsonify({"message": "ToF2 backend is running"})
     
-
-    return bp
 
 

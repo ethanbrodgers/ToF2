@@ -12,6 +12,7 @@ def serialize_doc(doc):
     return doc
 
 def serialize_list(docs):
+    """Applies serialize_doc() to an iterable"""
     return [serialize_doc(doc) for doc in docs]
 
 

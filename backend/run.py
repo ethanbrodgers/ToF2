@@ -3,8 +3,8 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from services.db import db
-# blueprints
-from routing.register_all_bp import register_all_bp
+from routing import register_all_bp
+
 
 # load env
 load_dotenv()
@@ -15,8 +15,11 @@ app = Flask(__name__)
 # activate CORS
 CORS(app)
 
-# register endpoints from blueprint
-register_all_bp(app, db)
+# setup database connection
+app.config["DB"] = db
+
+# register endpoints from blueprints
+register_all_bp(app)
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.getenv("PORT", 5000)))
