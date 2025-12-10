@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Word from './Word';
 import { getWords } from '../../services/api';
+import { wordType } from '../../types';
 
 /*
 Displays vocabulary words for current language if activated
@@ -8,7 +9,7 @@ Show: whether to display. Set to true when viewing vocabulary and false otherwis
 lang: 2-letter language code
  */
 export default function Vocab({show, lang}: {show: any, lang: any}) {
-    const [words, setWords] = useState([]);
+    const [words, setWords]: [Array<wordType>, Function] = useState([]);
 
     // called right after first render and all changes of prop lang
     useEffect(() => {

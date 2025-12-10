@@ -3,6 +3,8 @@ import WordDefDisplay from "./WordDefDisplay";
 import WordDescDisplay from "./WordDescDisplay";
 import WordFlag from "./WordFlag";
 
+import { wordType } from '../../types';
+
 /*
 Displays a word and all relevant data in Vocab
 word: see word schema
@@ -12,8 +14,7 @@ word: see word schema
 enum display { DEF = "definition", DESC = "description" };
 
 
-
-export default function Word({word}: {word: any}) {
+export default function Word({word}: {word: wordType}) {
     // state
     const [expanded, setExpanded] = React.useState(false);
     const toggleExpanded = () => { setExpanded(!expanded) };

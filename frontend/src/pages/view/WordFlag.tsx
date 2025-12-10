@@ -7,7 +7,7 @@ val:
     for attr="gender": "m", "f", or "n"
     for attr="pos":
         "n" for noun
-        "pro" for pronoun
+        "p" for pronoun
         "v" for verb
         "adj" for adjective
         "adv" for adverb
@@ -25,7 +25,7 @@ const textMap = {
     },
     pos: {
         n: "noun",
-        pro: "pronoun",
+        p: "pronoun",
         v: "verb",
         adj: "adjective",
         adv: "adverb",
@@ -44,7 +44,7 @@ const colorMap = {
     },
     pos: {
         n: "bg-blue-300",
-        pro: "bg-blue-400",
+        p: "bg-blue-400",
         v: "bg-orange-500",
         adj: "bg-yellow-500",
         adv: "bg-green-500",

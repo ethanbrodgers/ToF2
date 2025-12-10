@@ -3,6 +3,8 @@ This file contains all functions necessary for frontend-backend connections.
 Any component that needs a backend connection should import a function from this file.
 */
 
+import { wordType } from "../types";
+
 
 // ===== Internal use =====
 
@@ -39,7 +41,7 @@ function apiCall(
 
 // ===== Exports =====
 
-export function getWords(lang: string) {
+export function getWords(lang: string): Promise<Array<wordType>> {
     return apiCall("vocab", "GET", null, {lang: lang}, null)
     .then(response => response.json())
     .then(response => response.words)

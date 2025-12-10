@@ -21,7 +21,7 @@ def create_vocab_bp(db):
             query["lang"] = lang
 
         # get words
-        cursor = db.words.find(query)
+        cursor = db["Words"].find(query)
         words = serialize_list(list(cursor))
 
         # return
