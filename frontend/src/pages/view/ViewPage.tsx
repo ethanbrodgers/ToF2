@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './Navbar.js';
+import Navbar from '../../components/Navbar.js';
 import Options from './Options.js';
 import Vocab from './Vocab.js';
 
