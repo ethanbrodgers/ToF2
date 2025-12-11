@@ -27,7 +27,7 @@ export default function Word({word}: {word: wordType}) {
         <div className="w-full h-[150px] p-7 border-2 border-gray-600 flex flex-col justify-between items-center font-bold italic text-black relative cursor-pointer" onClick={toggleExpanded}>
             <img src="flashcard-slash.png" className="absolute w-full h-full left-0 top-0 -z-1" />
             <p className="w-full">{word.en}</p>
-            <p className="w-full text-right">{word.target}</p>
+            <p className="w-full text-right">{word.targ}</p>
         </div>
 
         {/* expandable */}
