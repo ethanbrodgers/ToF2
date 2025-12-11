@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
-import ViewPage from './pages/view/ViewPage';
-import MemorizePage from './pages/memorize/MemorizePage';
-import PracticePage from './pages/practice/PracticePage';
+import ViewPage from './pages/view/page';
+import MemorizePage from './pages/memorize/page';
+import PracticePage from './pages/practice/page';
 
 
 /*

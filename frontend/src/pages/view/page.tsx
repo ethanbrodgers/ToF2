@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/Navbar.js';
-import Options from './Options.js';
-import Vocab from './Vocab.js';
+import Options from './components/Options.js';
+import Vocab from './components/Vocab.js';
 
 const langOptions = {
     "es": {

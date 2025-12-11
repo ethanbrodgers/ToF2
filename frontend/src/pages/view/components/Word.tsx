@@ -3,7 +3,7 @@ import WordDefDisplay from "./WordDefDisplay";
 import WordDescDisplay from "./WordDescDisplay";
 import WordFlag from "./WordFlag";
 
-import { wordType } from '../../types';
+import { wordType } from '../../../types';
 
 /*
 Displays a word and all relevant data in Vocab
