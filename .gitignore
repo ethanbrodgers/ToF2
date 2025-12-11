@@ -16,6 +16,7 @@ backend/.env
 backend/.venv
 backend/venv
 backend/__pycache__
+__pycache__/
 backend/*.pyc
 backend/mongodb-login.txt
 frontend/.env.local
