@@ -4,4 +4,5 @@ from pymongo import MongoClient
 import os
 
 client = MongoClient(os.getenv("MONGODB_URI"))
-db = client["ToF2-database"]
+db = client[os.getenv("MONGODB_DB_NAME")]
+# db = client["ToF2-database"]
