@@ -5,7 +5,7 @@ In Word.tsx; displays the description of a word when expanded
 children: the text of the definition in the format: {
         "text": ["one string for each paragraph"],
         "ex": [
-          { "en": "English text of example", "target": "target text of example" }
+          { "en": "English text of example", "targ": "target text of example" }
         ]
       }
 */
@@ -16,7 +16,7 @@ export default function WordDefinitionDisplay({children}: {children: any}) {
         <p>Examples:</p>
         {children.ex.map((ex: any, i: number) =>
             <div key={i}>
-                <p className="text-green-400">{ex.target}</p>
+                <p className="text-green-400">{ex.targ}</p>
                 <p>{ex.en}</p>
             </div>
         )}

@@ -11,7 +11,7 @@ export type wordType = {
         text: Array<string>,
         ex: Array<{
             en: string,
-            target: string
+            targ: string
         }>
     }
 }
