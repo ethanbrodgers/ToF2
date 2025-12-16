@@ -1,6 +1,7 @@
 # vocab.py: blueprint for routes related to vocabulary words
 
 from flask import Blueprint, request, jsonify, current_app
+from bson import ObjectId
 from ..utils import serialize_list
 from services import db
 
@@ -29,5 +30,38 @@ def word_lookup_query_param():
     # return
     return jsonify({"words": words})
 
+# delete word
+@bp.route("/vocab/<id_str>", methods=["DELETE"])
+def delete_word(id_str):
 
+    # search for word to delete
+    cursor = db["Words"].find({
+        "$or": [
+            {
+                "_id": id_str
+            },
+            {
+                "_id": ObjectId(id_str)
+            }
+        ]
+    })
+    num_found = len(list(cursor))
+
+    # if none found, error
+    if num_found == 0:
+        return jsonify({"message": "no word found with given _id"}), 404
+
+    # delete
+    db["Words"].delete_many({
+        "$or": [
+            {
+                "_id": id_str
+            },
+            {
+                "_id": ObjectId(id_str)
+            }
+        ]
+    })
+
+    return jsonify({"message": "success"})
 
