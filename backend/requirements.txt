@@ -4,3 +4,4 @@ python-dotenv>=0.21
 # Use the "srv" extra to ensure DNS SRV support (dnspython) for MongoDB Atlas
 pymongo[srv]>=4.0
 openai>=2.0
+pydantic>=2.8
