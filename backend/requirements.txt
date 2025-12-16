@@ -3,6 +3,4 @@ Flask-Cors>=3.0
 python-dotenv>=0.21
 # Use the "srv" extra to ensure DNS SRV support (dnspython) for MongoDB Atlas
 pymongo[srv]>=4.0
-
-# Optional (use if you plan to run with a production WSGI server)
-# gunicorn>=20.0
+openai>=2.0

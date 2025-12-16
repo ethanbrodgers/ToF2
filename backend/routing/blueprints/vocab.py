@@ -2,6 +2,7 @@
 
 from flask import Blueprint, request, jsonify, current_app
 from ..utils import serialize_list
+from services import db
 
 bp = Blueprint("vocab", __name__)
 
@@ -9,9 +10,6 @@ bp = Blueprint("vocab", __name__)
 # word lookup
 @bp.route("/vocab", methods=["GET"])
 def word_lookup_query_param():
-    # access database stored in Flask instance by run.py
-    # only works inside a request handler
-    db = current_app.config["DB"]
 
     # get potential args
     en = request.args.get("en")
