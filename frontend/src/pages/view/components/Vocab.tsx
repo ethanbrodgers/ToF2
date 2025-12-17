@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Word from './Word';
-import { getWords } from '../../../services/api';
-import { wordType } from '../../../types';
+// "@" has been set up as an alias for frontend/src
+import { getWords } from '@/services/api';
+import { wordType } from '@/types';
 
 /*
 Displays vocabulary words for current language if activated
-Show: whether to display. Set to true when viewing vocabulary and false otherwise
 lang: 2-letter language code
  */
-export default function Vocab({show, lang}: {show: any, lang: any}) {
-    const [words, setWords]: [Array<wordType>, Function] = useState([]);
+export default function Vocab({lang}: {lang: any}) {
+    const [words, setWords]: [Array<wordType>, Function] = React.useState([]);
 
     // called right after first render and all changes of prop lang
-    useEffect(() => {
+    React.useEffect(() => {
         // avoid race condition: var mounted prevents two calls of this func from running at once
         let mounted = true;
         getWords(lang)
@@ -28,9 +28,7 @@ export default function Vocab({show, lang}: {show: any, lang: any}) {
     }, [lang]);
 
     // jsx
-    return ( <div className="grow p-8" style={{
-        display: show ? "block" : "none"
-    }}>
+    return ( <div className="grow p-8">
         <h1>Vocabulary</h1>
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,250px)] mx-auto">
             {words.map((word, i) => (
