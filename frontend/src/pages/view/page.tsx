@@ -1,7 +1,8 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Options from './components/Options';
-import Vocab from './components/Vocab';
+// import Vocab from './components/Vocab';
+import GridDisplay from './components/GridDisplay';
 import Grammar from './components/Grammar'
 
 const langOptions = {
@@ -44,10 +45,7 @@ export default function ViewPage() {
         <Navbar />
         <div className="flex grow gap-16">
             <Options langOptions={langOptions} setLang={setLang} viewOptions={viewOptions} setView={setView} />
-            {view == "words" && <Vocab lang={lang}/>}
-            {view == "rules" && <Grammar lang={lang}/>}
-            {view == "norms" && <p>Style goes here</p>}
-            {view == "passages" && <p>Passages go here</p>}
+            <GridDisplay mode={view} lang={lang} />
         </div>
     </div> );
 }

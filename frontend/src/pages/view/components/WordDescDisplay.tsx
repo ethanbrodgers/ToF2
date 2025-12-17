@@ -1,4 +1,5 @@
 import React from 'react';
+import ExSentence from './ExSentence';
 
 /*
 In Word.tsx; displays the description of a word when expanded
@@ -15,10 +16,7 @@ export default function WordDefinitionDisplay({children}: {children: any}) {
         <p>{children.text}</p>
         <p>Examples:</p>
         {children.ex.map((ex: any, i: number) =>
-            <div key={i}>
-                <p className="text-green-400">{ex.targ}</p>
-                <p>{ex.en}</p>
-            </div>
+            <ExSentence key={i}>{ex}</ExSentence>
         )}
     </div> );
 }
