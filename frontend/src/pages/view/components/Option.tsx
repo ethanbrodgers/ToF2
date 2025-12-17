@@ -14,7 +14,8 @@ export default function Option(
     {
         displayText,
         options,
-        setOption
+        setOption,
+        key
     }: {
         displayText: any,
         options: {
@@ -22,7 +23,8 @@ export default function Option(
                 display: string
             }
         },
-        setOption: any
+        setOption: any,
+        key?: any
     }
 ) {
     return ( <div className="m-6">

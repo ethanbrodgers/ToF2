@@ -10,7 +10,7 @@ import ExSentence from './ExSentence';
  * 
  * @param {wordType} props.word - the word to be displayed, following the word schema
  */
-export default function NewWord({word}: {word: wordType}) {
+export default function NewWord({word, key}: {word: wordType, key?: any}) {
     // ==== create pieces ====
 
     // tags

@@ -9,7 +9,7 @@
  * 
  * @param {string} props.children.targ - example sentence in the target language
  */
-export default function ExSentence({children: {en, targ}}: {children: {en: string, targ: string}}) {
+export default function ExSentence({children: {en, targ}, key}: {children: {en: string, targ: string}, key?: any}) {
     return ( <div>
         <p className="text-green-400">{targ}</p>
         <p>{en}</p>

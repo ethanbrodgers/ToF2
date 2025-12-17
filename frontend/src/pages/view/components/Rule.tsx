@@ -10,7 +10,7 @@ import { ruleNormType } from '@/types';
  * 
  * @param {ruleNormType} props.rule - the rule to be displayed, following the rule schema
  */
-export default function Rule({rule}: {rule: ruleNormType}) {
+export default function Rule({rule, key}: {rule: ruleNormType, key?: any}) {
     const details = [
         { icon: "📖", content: <div>
             <p>Definition:</p>
