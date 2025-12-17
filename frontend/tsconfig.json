@@ -5,6 +5,10 @@
     "jsx": "react-jsx",
     "lib": ["es2020", "dom"],
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }

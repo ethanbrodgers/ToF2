@@ -7,7 +7,7 @@ children: the text to display, ex. "Spanish"
 val: the internal value of this option, ex. "es"
 setOption: the state modifier function for this setting
 */
-export default function OptionEntry({children, val, setOption}: {children: any, val: any, setOption: any}) {
+export default function OptionEntry({children, val, setOption }: {children: any, val: any, setOption: any, key?: any}) {
     return ( <p
         className="text-green-600 cursor-pointer"
         onClick={() => {setOption(val)}}>

@@ -6,7 +6,7 @@ import Option from './Option';
 The collapsable options menu
 setLang: state modifier for language
 */
-export default function Options({setLang, langOptions, viewOptions}: {setLang: any, langOptions: any, viewOptions: any}) {
+export default function OptionsBar({langOptions, setLang, viewOptions, setView}: {langOptions: any, setLang: any, viewOptions: any, setView: any}) {
     const [expanded, setExpanded] = React.useState(false);
 
     return ( <div className="bg-slate-200 transition-all duration-150 relative" style={{
@@ -24,7 +24,7 @@ export default function Options({setLang, langOptions, viewOptions}: {setLang: a
             <Option
                 displayText="View"
                 options={viewOptions}
-                setOption={(val: string) => {console.log("Not implemented: set view to " + val)}}
+                setOption={setView}
             />
         </div>
     </div> );
