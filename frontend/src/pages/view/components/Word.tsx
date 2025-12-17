@@ -1,8 +1,7 @@
 import { wordType } from '@/types';
 import Card from '@/components/Card'
 import WordFlag from "./WordFlag";
-import WordDefDisplay from "./WordDefDisplay";
-import WordDescDisplay from "./WordDescDisplay";
+import ExSentence from './ExSentence';
 
 /**
  * Displays a word from user data on the view page.
@@ -21,8 +20,18 @@ export default function NewWord({word}: {word: wordType}) {
 
     // details
     const details = [
-        { icon: "📖", content: <WordDefDisplay>{word.def}</WordDefDisplay> },
-        { icon: "💬", content: <WordDescDisplay>{word.desc}</WordDescDisplay>}
+        { icon: "📖", content: <div>
+            <p>Definition:</p>
+            <p>{word.def}</p>
+        </div> },
+        { icon: "💬", content: <div>
+            <p>Description:</p>
+            <p>{word.desc.text}</p>
+            <p>Examples:</p>
+            {word.desc.ex.map((ex: any, i: number) =>
+                <ExSentence key={i}>{ex}</ExSentence>
+            )}
+        </div> }
     ]
 
     // en/targ display (the part with the slash that shows even when collapsed)

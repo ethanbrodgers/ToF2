@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
-import Options from './components/Options';
+import Options from './components/OptionsBar';
 // import Vocab from './components/Vocab';
 import GridDisplay from './components/GridDisplay';
 import Grammar from './components/Grammar'
