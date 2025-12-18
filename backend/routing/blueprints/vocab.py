@@ -71,6 +71,11 @@ def add_word():
         word_desc["text"] = req_desc.get("text") if req_desc.get("text") else []
         word_desc["ex"] = req_desc.get("ex") if req_desc.get("ex") else []
         word["desc"] = word_desc
+    else:
+        word["desc"] = {
+            "ex": [],
+            "text": []
+        }
 
     # add
     db["Words"].insert_one(word)
