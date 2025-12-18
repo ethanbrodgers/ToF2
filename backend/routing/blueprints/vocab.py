@@ -9,7 +9,7 @@ bp = Blueprint("vocab", __name__)
 
 
 # word lookup
-@bp.route("/vocab", methods=["GET"])
+@bp.route("/", methods=["GET"])
 def word_lookup_query_param():
 
     # get potential args
@@ -80,7 +80,7 @@ def add_word():
 
 
 # delete word
-@bp.route("/vocab/<id_str>", methods=["DELETE"])
+@bp.route("/<id_str>", methods=["DELETE"])
 def delete_word(id_str):
 
     # search for word to delete

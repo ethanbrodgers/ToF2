@@ -6,7 +6,7 @@ bp = Blueprint("grammar", __name__)
 
 
 # rule lookup
-@bp.route("/grammar", methods=["GET"])
+@bp.route("/", methods=["GET"])
 def rule_lookup_query_param():
 
     # get potential args
@@ -41,7 +41,7 @@ def rule_lookup_query_param():
     return jsonify({"rules": rules})
 
 # add a rule
-@bp.route("/grammar", methods=["PUT"])
+@bp.route("/", methods=["PUT"])
 def add_rule():
     req_body = request.get_json()
 
