@@ -1,9 +1,9 @@
 import React from 'react';
 import Word from './Word';
 import Rule from './Rule';
+import Norm from './Norm';
 // "@" has been set up as an alias for frontend/src
-import { getWords } from '@/services/api';
-import { getRules } from '@/services/api';
+import { getWords, getRules, getNorms } from '@/services/api';
 import { wordType } from '@/types';
 import { ruleNormType } from '@/types';
 
@@ -34,8 +34,9 @@ export default function GridDisplay({mode, lang}: {mode: string, lang: string}) 
 
     // pick the right function to fetch data
     let fetchData: any;
-    if (mode == "words") fetchData = getWords;
-    else if (mode == "rules") fetchData = getRules;
+    if (mode === "words") fetchData = getWords;
+    else if (mode === "rules") fetchData = getRules;
+    else if (mode === "norms") fetchData = getNorms;
     else {
         // mode not implemented
         console.error(`GridDisplay received non-implemented mode "${mode}"`);
@@ -84,8 +85,9 @@ export default function GridDisplay({mode, lang}: {mode: string, lang: string}) 
                 ? <div className="grid gap-4 grid-cols-[repeat(auto-fit,250px)] mx-auto">
                     {data.map((datum, i) => {
                         // "as" keyword asserts that, based on previous logic, the argument must have the right type. Suppresses warnings.
-                        if (mode == "words") return <Word key={i} word={datum as wordType} />
-                        else if (mode == "rules") return <Rule key={i} rule={datum as ruleNormType} />
+                        if (mode === "words") return <Word key={i} word={datum as wordType} />
+                        else if (mode === "rules") return <Rule key={i} rule={datum as ruleNormType} />
+                        else if (mode === "norms") return <Norm key={i} norm={datum as ruleNormType} />
                     })}
                 </div>
                 // loading screen

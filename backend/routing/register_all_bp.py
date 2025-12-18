@@ -6,6 +6,9 @@ from .blueprints.error import bp as error_bp
 
 def register_all_bp(app):
     """Registers all blueprints to the given Flask app, giving it all endpoints created in the routing package"""
+    # Disable strict slash handling - /vocab and /vocab/ both work
+    app.url_map.strict_slashes = False
+    
     bps = [
         (vocab_bp, "/vocab"),
         (welcome_bp, "/welcome"),
