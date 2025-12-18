@@ -69,3 +69,9 @@ export async function getRules(lang: string): Promise<Array<ruleNormType>> {
     .then(response => response.json())
     .then(response => response.rules)
 }
+
+export async function getNorms(lang: string): Promise<Array<ruleNormType>> {
+    return apiCall("/style", "GET", null, {lang: lang}, null)
+    .then(response => response.json())
+    .then(response => response.norms)
+}
