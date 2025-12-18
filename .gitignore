@@ -31,3 +31,6 @@ frontend/.env.local
 *.njsproj
 *.sln
 *.sw?
+
+# test folder
+tests/
