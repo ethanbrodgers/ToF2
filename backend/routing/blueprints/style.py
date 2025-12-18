@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from backend.routing.utils import serialize_list
+from ..utils import serialize_list
 from services import db
 
 bp = Blueprint("style", __name__)
