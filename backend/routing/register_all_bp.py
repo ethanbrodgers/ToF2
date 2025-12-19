@@ -11,7 +11,7 @@ def register_all_bp(app):
     
     bps = [
         (vocab_bp, "/vocab"),
-        (welcome_bp, "/welcome"),
+        (welcome_bp, "/"),
         (error_bp, "/error"),
         (grammar_bp, "/grammar"),
         (style_bp, "/style"),

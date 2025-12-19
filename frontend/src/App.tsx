@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
+import Homepage from './pages/home/page';
 import ViewPage from './pages/view/page';
 import MemorizePage from './pages/memorize/page';
 import PracticePage from './pages/practice/page';
@@ -12,6 +13,7 @@ page components.
 export default function App() {
     return ( <BrowserRouter>
         <Routes>
+            <Route path="/" element={<Homepage />} />
             <Route path="/view" element={<ViewPage />} />
             <Route path="/memorize" element={<MemorizePage />} />
             <Route path="/practice" element={<PracticePage />} />

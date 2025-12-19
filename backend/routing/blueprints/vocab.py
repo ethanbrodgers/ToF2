@@ -31,7 +31,7 @@ def word_lookup_query_param():
     return jsonify({"words": words})
 
 # add a word
-@bp.route("/vocab", methods=["PUT"])
+@bp.route("/", methods=["PUT"])
 def add_word():
     req_body = request.get_json()
 
@@ -61,21 +61,11 @@ def add_word():
     word["targ"] = req_body["targ"]
     word["lang"] = req_body["lang"]
     word["pos"] = req_body["pos"]
-    word["def"] = req_body.get("def") if req_body.get("def") else "[none provided]"
-    word["gender"] = req_body.get("gender") if req_body.get("gender") else None
-    word["trans"] = req_body.get("trans") if req_body.get("trans") else None
-    
-    if req_body.get("desc"):
-        word_desc = {}
-        req_desc = req_body["desc"]
-        word_desc["text"] = req_desc.get("text") if req_desc.get("text") else []
-        word_desc["ex"] = req_desc.get("ex") if req_desc.get("ex") else []
-        word["desc"] = word_desc
-    else:
-        word["desc"] = {
-            "ex": [],
-            "text": []
-        }
+    word["def"] = req_body.get("def", "[none provided]")
+    word["gender"] = req_body.get("gender", None)
+    word["trans"] = req_body.get("trans", None)
+    word["desc"] = req_body.get("desc", "[none provided]")
+    word["ex"] = req_body.get("ex", [])
 
     # add
     db["Words"].insert_one(word)
