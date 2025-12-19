@@ -26,9 +26,9 @@ export default function Word({word}: {word: wordType, key?: any}) {
         </div> },
         { icon: "💬", content: <div>
             <p>Description:</p>
-            <p>{word.desc.text}</p>
+            <p>{word.desc}</p>
             <p>Examples:</p>
-            {word.desc.ex.map((ex: any, i: number) =>
+            {word.ex.map((ex: any, i: number) =>
                 <ExSentence key={i}>{ex}</ExSentence>
             )}
         </div> }
