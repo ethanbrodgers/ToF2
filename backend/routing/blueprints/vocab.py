@@ -61,9 +61,9 @@ def add_word():
     word["targ"] = req_body["targ"]
     word["lang"] = req_body["lang"]
     word["pos"] = req_body["pos"]
-    word["def"] = req_body.get("def") if req_body.get("def") else "[none provided]"
-    word["gender"] = req_body.get("gender") if req_body.get("gender") else None
-    word["trans"] = req_body.get("trans") if req_body.get("trans") else None
+    word["def"] = req_body.get("def", "[none provided]")
+    word["gender"] = req_body.get("gender", None)
+    word["trans"] = req_body.get("trans", None)
     word["desc"] = req_body.get("desc", "[none provided]")
     word["ex"] = req_body.get("ex", [])
 

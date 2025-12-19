@@ -61,9 +61,9 @@ def add_rule():
     rule = {}
     rule["title"] = req_body["title"]
     rule["lang"] = req_body["lang"]
-    rule["def"] = req_body.get("def") if req_body.get("def") else "[none provided]"
-    rule["notes"] = req_body.get("notes") if req_body.get("notes") else []
-    rule["ex"] = req_body.get("ex") if req_body.get("ex") else []
+    rule["def"] = req_body.get("def", "[none provided]")
+    rule["notes"] = req_body.get("notes", [])
+    rule["ex"] = req_body.get("ex", [])
 
     # add
     db["Rules"].insert_one(rule)
