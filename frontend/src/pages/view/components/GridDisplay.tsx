@@ -53,13 +53,15 @@ export default function GridDisplay({mode, lang}: {mode: string, lang: string}) 
     }
     // display
     else {
-        return <div className="grid w-full gap-4 grid-cols-[repeat(auto-fit,250px)] mx-auto">
-            {data?.map((datum, i) => {
-                // "as" keyword asserts that, based on previous logic, the argument must have the right type. Suppresses warnings.
-                if (mode === "words") return <Word key={i} word={datum as wordType} />
-                else if (mode === "rules") return <Rule key={i} rule={datum as ruleNormType} />
-                else if (mode === "norms") return <Norm key={i} norm={datum as ruleNormType} />
-            })}
+        return <div className="grow p-8">
+            <div className="grid w-full gap-4 grid-cols-[repeat(auto-fit,250px)] mx-auto">
+                {data?.map((datum, i) => {
+                    // "as" keyword asserts that, based on previous logic, the argument must have the right type. Suppresses warnings.
+                    if (mode === "words") return <Word key={i} word={datum as wordType} />
+                    else if (mode === "rules") return <Rule key={i} rule={datum as ruleNormType} />
+                    else if (mode === "norms") return <Norm key={i} norm={datum as ruleNormType} />
+                })}
+            </div>
         </div>
     }
 }
