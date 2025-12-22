@@ -64,6 +64,16 @@ export async function getWords(lang: string): Promise<Array<wordType>> {
     .then(response => response.words)
 }
 
+/**
+ * Add a word.
+ * @param {wordType} word - The word to add
+ * @return A promise resolving to a boolean representing whether the addition was successful
+ */
+export async function addWord(word: wordType): Promise<boolean> {
+    return apiCall("/vocab", "PUT", word, null, null)
+    .then(response => response.ok);
+}
+
 export async function getRules(lang: string): Promise<Array<ruleNormType>> {
     return apiCall("/grammar", "GET", null, {lang: lang}, null)
     .then(response => response.json())

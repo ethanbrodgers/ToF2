@@ -1,5 +1,6 @@
 import React from 'react';
 import { wordType } from '@/types';
+import { useAddWord } from '@/services/useQueries';
 
 const defaultWord = {
     lang: "es",
@@ -24,9 +25,22 @@ const defaultWord = {
 export default function AddWordPanel() {
     // state var: expanded
     const [expanded, setExpanded] = React.useState(false);
-    function toggleExpanded() { setExpanded(!expanded); };
     // state var: word to add
     const [toAdd, setToAdd] = React.useState(defaultWord);
+    // state vars: add word
+    const { mutate: addWord } = useAddWord();
+
+    // executes plus button functionality
+    function plusButtonFunc() {
+        // if collapsed: expand
+        if (!expanded) {
+            setExpanded(true);
+        } else {
+            // else, add word and collapse
+            addWord(toAdd);
+            setExpanded(false);
+        }
+    }
 
     return ( <div className="w-full">
         {/* when expanded */}
@@ -109,7 +123,7 @@ export default function AddWordPanel() {
         {/* big plus button */}
         <button
             className="w-96 p-6 mx-auto bg-green-400 block text-3xl cursor-pointer"
-            onClick={toggleExpanded}
+            onClick={plusButtonFunc}
         >+</button>
         
     </div> );
