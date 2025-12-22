@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import Options from './components/OptionsBar';
 // import Vocab from './components/Vocab';
 import GridDisplay from './components/GridDisplay';
-import Grammar from './components/Grammar'
+import AddWordPanel from './components/AddWordPanel';
 
 const langOptions = {
     "es": {
@@ -45,7 +45,10 @@ export default function ViewPage() {
         <Navbar />
         <div className="flex grow gap-16">
             <Options langOptions={langOptions} setLang={setLang} viewOptions={viewOptions} setView={setView} />
-            <GridDisplay mode={view} lang={lang} />
+            <div className="grow items-stretch flex flex-col justify-between">
+                <GridDisplay mode={view} lang={lang} />
+                <AddWordPanel />
+            </div>
         </div>
     </div> );
 }
