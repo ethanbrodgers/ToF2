@@ -14,7 +14,7 @@ export type wordType = {
     pos: "n" | "p" | "v" | "adj" | "adv" | "c" | "i" | "q",
     gender: "m" | "f" | "n" | null,
     trans: string | null,
-    desc: Array<string>,
+    desc: string,
     ex: Array<{
         en: string,
         targ: string

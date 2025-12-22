@@ -1,6 +1,7 @@
 import React from 'react';
-import { wordType } from '@/types';
 import { useAddWord } from '@/services/useQueries';
+import AddWordInput from './AddWordInput';
+import AddWordSelect from './AddWordSelect';
 
 const defaultWord = {
     lang: "es",
@@ -10,7 +11,7 @@ const defaultWord = {
     pos: "n",
     gender: null,
     trans: null,
-    desc: [],
+    desc: "",
     ex: []
 }
 
@@ -42,79 +43,44 @@ export default function AddWordPanel() {
         }
     }
 
+    // modifies a field of toAdd. Usage example: setToAddField({targ: "perro"});
+    function setToAddField(obj) {
+        setToAdd({...toAdd, ...obj});
+    }
+
     return ( <div className="w-full">
-        {/* when expanded */}
+        {/* expandable */}
         <div className="bg-gray-200 overflow-hidden transition-all" style={{
-            height: (expanded) ? "300px" : "0"
+            height: (expanded) ? "500px" : "0"
         }}>
             <p className="text-5xl">Add a word</p>
-            {/* lang */}
-            <select onChange={(event) => {
-                setToAdd({...toAdd, lang: event.target.value});
-                console.log(toAdd);
-            }}>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <option value="zh">Chinese</option>
-                <option value="ru">Russian</option>
-            </select>
-            {/* pos */}
-            <select onChange={(event) => {
-                setToAdd({...toAdd, pos: event.target.value});
-                console.log(toAdd);
-            }}>
-                <option value="n">Noun</option>
-                <option value="p">Pronoun</option>
-                <option value="v">Verb</option>
-                <option value="adj">Adjective</option>
-                <option value="adv">Adverb</option>
-                <option value="c">Connector</option>
-                <option value="i">Interjection</option>
-                <option value="q">Quantifier</option>
-            </select>
-            {/* en */}
-            <p>English:</p>
-            <input type="text" onChange={(event) => {
-                setToAdd({...toAdd, en: event.target.value});
-                console.log(toAdd);
+            <AddWordSelect field="lang" display="Language" setToAddField={setToAddField} options={{
+                es: "Spanish",
+                fr: "French",
+                zh: "Chinese",
+                ru: "Russian"
             }} />
-            {/* targ */}
-            <p>Target:</p>
-            <input type="text" onChange={(event) => {
-                setToAdd({...toAdd, targ: event.target.value});
-                console.log(toAdd);
+            <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
+                n: "Noun",
+                p: "Pronoun",
+                v: "Verb",
+                adj: "Adjective",
+                adv: "Adverb",
+                c: "Connector",
+                i: "Interjection",
+                q: "Quantifier"
             }} />
-            {/* def */}
-            <p>Definition:</p>
-            <input type="text" onChange={(event) => {
-                const def = (event.target.value === "") ? "[None provided]" : event.target.value;
-                setToAdd({...toAdd, def});
-                console.log(toAdd);
+            <AddWordInput field="en" display="English" setToAddField={setToAddField} />
+            <AddWordInput field="targ" display="Target" setToAddField={setToAddField} />
+            <AddWordInput field="def" display="Definition" setToAddField={setToAddField} />
+            <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
+                "": "None",
+                m: "Masculine",
+                f: "Feminine",
+                n: "Neuter"
             }} />
-            {/* gender */}
-            <select onChange={(event) => {
-                setToAdd({...toAdd, gender: event.target.value});
-                console.log(toAdd);
-            }}>
-                <option value={null}>None</option>
-                <option value="m">Masculine</option>
-                <option value="f">Feminine</option>
-                <option value="n">Neuter</option>
-            </select>
-            {/* trans */}
-            <p>Transliteration:</p>
-            <input type="text" onChange={(event) => {
-                const trans = (event.target.value === "") ? null : event.target.value;
-                setToAdd({...toAdd, trans});
-                console.log(toAdd);
-            }} />
-            {/* desc */}
-            <p>Description:</p>
-            <input type="text" onChange={(event) => {
-                const desc = (event.target.value === "") ? "[None provided]" : event.target.value;
-                setToAdd({...toAdd, desc});
-                console.log(toAdd);
-            }} />
+            <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} />
+            <AddWordInput field="desc" display="Description" setToAddField={setToAddField} />
             {/* ex */}
             
 
