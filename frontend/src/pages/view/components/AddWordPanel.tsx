@@ -89,11 +89,18 @@ export default function AddWordPanel() {
 
         </div>
 
-        {/* big plus button */}
-        <button
-            className="w-96 p-6 mx-auto bg-green-400 block text-3xl cursor-pointer"
-            onClick={plusButtonFunc}
-        >+</button>
+        {/* big plus button (and x button) */}
+        <div className="relative">
+            <button
+                className="w-full p-6 bg-green-400 block text-3xl cursor-pointer"
+                onClick={plusButtonFunc}
+            >+</button>
+            { expanded && <button
+                className="absolute left-0 top-0 w-[84px] h-[84px] text-3xl p-6 bg-red-400 cursor-pointer"
+                onClick={() => {setExpanded(false)}}
+            >X</button> }
+        </div>
+        
         
     </div> );
 }
