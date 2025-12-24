@@ -2,6 +2,7 @@ import React from 'react';
 import { useAddWord } from '@/services/useQueries';
 import AddWordInput from './AddWordInput';
 import AddWordSelect from './AddWordSelect';
+import AddWordNotice from './AddWordNotice';
 
 const defaultWord = {
     lang: "es",
@@ -30,7 +31,11 @@ export default function AddWordPanel() {
     const [toAdd, setToAdd] = React.useState(defaultWord);
     console.log(toAdd);
     // state vars: add word
-    const { mutate: addWord } = useAddWord();
+    const { mutate: addWord, isPending, isError, error, isSuccess } = useAddWord();
+    // state var: notice to display
+    const [notice, setNotice]: [{
+        type: "loading" | "error" | "success", text: string, key?: any
+    }, Function] = React.useState(null);
 
     // executes plus button functionality
     function plusButtonFunc() {
@@ -39,10 +44,25 @@ export default function AddWordPanel() {
             setExpanded(true);
         } else {
             // else, attempt to add word
-            if (toAdd.en && toAdd.targ)
-                addWord(toAdd);
-            else
-                console.log("Tried to add invalid word");
+            if (toAdd.en && toAdd.targ) {
+                addWord(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        setNotice({ type: "success", text: "Word added", key: Date.now() });
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        setNotice({ type: "error", text: `Error adding word: ${error.message}`, key: Date.now() });
+                    }
+                });
+                // key: Date.now() makes this notice unique from any identical notice that might be
+                // created afterward. Important for making the fading behavior work properly.
+                setNotice({ type: "loading", text: "Loading...", key: Date.now() });
+            }
+            else {
+                console.error("Tried to add invalid word");
+                setNotice({ type: "error", text: "Word must have English and Target", key: Date.now() });
+            }
         }
     }
 
@@ -87,6 +107,11 @@ export default function AddWordPanel() {
             {/* ex */}
             
 
+        </div>
+
+        {/* notice display */}
+        <div className="h-8 border">
+            {notice && <AddWordNotice type={notice.type} key={notice.key}>{notice.text}</AddWordNotice>}
         </div>
 
         {/* big plus button (and x button) */}
