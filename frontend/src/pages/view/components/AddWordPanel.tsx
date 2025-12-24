@@ -5,13 +5,13 @@ import AddWordSelect from './AddWordSelect';
 
 const defaultWord = {
     lang: "es",
-    en: "",
-    targ: "",
-    def: "",
+    en: null,
+    targ: null,
+    def: "[None provided]",
     pos: "n",
     gender: null,
     trans: null,
-    desc: "",
+    desc: "[None provided]",
     ex: []
 }
 
@@ -28,6 +28,7 @@ export default function AddWordPanel() {
     const [expanded, setExpanded] = React.useState(false);
     // state var: word to add
     const [toAdd, setToAdd] = React.useState(defaultWord);
+    console.log(toAdd);
     // state vars: add word
     const { mutate: addWord } = useAddWord();
 
@@ -37,13 +38,15 @@ export default function AddWordPanel() {
         if (!expanded) {
             setExpanded(true);
         } else {
-            // else, add word and collapse
-            addWord(toAdd);
-            setExpanded(false);
+            // else, attempt to add word
+            if (toAdd.en && toAdd.targ)
+                addWord(toAdd);
+            else
+                console.log("Tried to add invalid word");
         }
     }
 
-    // modifies a field of toAdd. Usage example: setToAddField({targ: "perro"});
+    // modifies a field of toAdd. Usage example: setToAddField({targ: "perro""});
     function setToAddField(obj) {
         setToAdd({...toAdd, ...obj});
     }
@@ -55,32 +58,32 @@ export default function AddWordPanel() {
         }}>
             <p className="text-5xl">Add a word</p>
             <AddWordSelect field="lang" display="Language" setToAddField={setToAddField} options={{
-                es: "Spanish",
-                fr: "French",
-                zh: "Chinese",
-                ru: "Russian"
-            }} />
+                "Spanish": "es",
+                "French": "fr",
+                "Chinese": "zh",
+                "Russian": "ru"
+            }}/>
             <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
-                n: "Noun",
-                p: "Pronoun",
-                v: "Verb",
-                adj: "Adjective",
-                adv: "Adverb",
-                c: "Connector",
-                i: "Interjection",
-                q: "Quantifier"
+                "Noun": "n",
+                "Pronoun": "p",
+                "Verb": "v",
+                "Adjective": "adj",
+                "Adverb": "adv",
+                "Connector": "c",
+                "Interjection": "i",
+                "Quantifier": "q"
             }} />
-            <AddWordInput field="en" display="English" setToAddField={setToAddField} />
-            <AddWordInput field="targ" display="Target" setToAddField={setToAddField} />
-            <AddWordInput field="def" display="Definition" setToAddField={setToAddField} />
+            <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
+            <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
+            <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
             <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
-                "": "None",
-                m: "Masculine",
-                f: "Feminine",
-                n: "Neuter"
+                "None": null,
+                "Masculine": "m",
+                "Feminine": "f",
+                "Neuter": "n"
             }} />
-            <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} />
-            <AddWordInput field="desc" display="Description" setToAddField={setToAddField} />
+            <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
+            <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
             {/* ex */}
             
 

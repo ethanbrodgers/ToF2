@@ -14,13 +14,12 @@ import React from 'react';
  * (ex. "Spanish")
  */
 export default function AddWordInput({field, display, setToAddField, options}: {field: string, display: string, setToAddField: Function, options: Object}) {
-    console.log(Object.entries(options))
     return ( <div>
         <p className="inline mr-2">{display}:</p>
         <select className="inline" onChange={(event) => {
             setToAddField({[field]: event.target.value});
         }}>
-            {Object.entries(options).map(([val, display], i) => 
+            {Object.entries(options).map(([display, val], i) => 
                 <option value={val} key={i}>{display}</option>)}
         </select>
     </div> );
