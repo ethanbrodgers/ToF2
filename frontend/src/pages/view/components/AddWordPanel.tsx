@@ -36,6 +36,10 @@ export default function AddWordPanel() {
     const [notice, setNotice]: [{
         type: "loading" | "error" | "success", text: string, key?: any
     }, Function] = React.useState(null);
+    // makes and displays a new notice
+    function makeNotice(type: "loading" | "error" | "success", text: string) {
+        setNotice({type, text, key: Date.now()});
+    }
 
     // executes plus button functionality
     function plusButtonFunc() {
@@ -48,20 +52,20 @@ export default function AddWordPanel() {
                 addWord(toAdd, {
                     // function to run when added successfully
                     onSuccess: () => {
-                        setNotice({ type: "success", text: "Word added", key: Date.now() });
+                        makeNotice("success", "Word added")
                     },
                     // function to run when error
                     onError: (error) => {
-                        setNotice({ type: "error", text: `Error adding word: ${error.message}`, key: Date.now() });
+                        makeNotice("error", `Error adding word: ${error.message}`);
                     }
                 });
                 // key: Date.now() makes this notice unique from any identical notice that might be
                 // created afterward. Important for making the fading behavior work properly.
-                setNotice({ type: "loading", text: "Loading...", key: Date.now() });
+                makeNotice("loading", "Loading...")
             }
             else {
                 console.error("Tried to add invalid word");
-                setNotice({ type: "error", text: "Word must have English and Target", key: Date.now() });
+                makeNotice("error", "Word must have English and Target");
             }
         }
     }
