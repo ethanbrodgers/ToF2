@@ -14,13 +14,23 @@ import React from 'react';
  * @param {Object} props.options - the options displayed in the select. Formatted as
  * an object where keys are the internal values (ex. "es") and values are the display text
  * (ex. "Spanish")
+ * @param {string} [props.stateVar] - A state variable that will be bound to this select. A change
+ * in the variable will change the value of the select and vice versa. props.setStateVar is required
+ * if this is provided.
+ * @param {Function} [props.setStateVar] - The setter function for stateVar. Will be used to link
+ * this select's value to the value of the state variable.
  */
-export default function AddWordInput({field, header=false, display, setToAddField, options}: {field: string, header?: boolean, display?: string, setToAddField: Function, options: Object}) {
+export default function AddWordInput({field, header=false, display, setToAddField, options, stateVar, setStateVar}: {field: string, header?: boolean, display?: string, setToAddField: Function, options: Object, stateVar?: string, setStateVar?: Function}) {
     return ( <div>
         {display && <p className="inline mr-2">{display}:</p>}
-        <select className={`inline border-b ${(header) ? "text-5xl" : ""}`} onChange={(event) => {
-            setToAddField({[field]: event.target.value});
-        }}>
+        <select
+            className={`inline border-b ${(header) ? "text-5xl" : ""}`}
+            onChange={(event) => {
+                setToAddField({[field]: event.target.value});
+                if (setStateVar) setStateVar(event.target.value);
+            }}
+            value={stateVar}
+        >
             {Object.entries(options).map(([display, val], i) => 
                 <option value={val} key={i}>{display}</option>)}
         </select>

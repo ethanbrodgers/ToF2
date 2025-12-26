@@ -49,7 +49,7 @@ export default function ViewPage() {
                 <div className="overflow-y-auto min-h-0 border-3 border-gray-500">
                     <GridDisplay mode={view} lang={lang} />
                 </div>
-                <AddWordPanel />
+                <AddWordPanel lang={lang} setLang={setLang} />
             </div>
         </div>
     </div> );

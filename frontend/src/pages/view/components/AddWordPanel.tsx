@@ -23,8 +23,12 @@ const defaultWord = {
  * of the data you want to add.
  * 
  * @param {Object} props - object props
+ * @param {string} props.lang - The state variable representing the language
+ * being viewed on the view page
+ * @param {Function} props.setLang - The state mutator function that sets
+ * the language being viewed on the view page. Usage example: setLang("es");
  */
-export default function AddWordPanel() {
+export default function AddWordPanel({lang, setLang}: {lang: string, setLang: Function}) {
     // state var: expanded
     const [expanded, setExpanded] = React.useState(false);
     // state var: word to add
@@ -91,7 +95,7 @@ export default function AddWordPanel() {
                             "French": "fr",
                             "Chinese": "zh",
                             "Russian": "ru"
-                        }}/>
+                        }} stateVar={lang} setStateVar={setLang} />
                         <p className="text-5xl">word</p>
                     </div>
 
