@@ -71,3 +71,37 @@ def add_rule():
     # return
     return jsonify({"message": "success"})
 
+# delete a rule
+@bp.route("/<id_str>", methods=["DELETE"])
+def delete_rule(id_str):
+
+    # search for a rule to delete
+    cursor = db["Rules"].find({
+        "$or": [
+            {
+                "_id": id_str
+            },
+            {
+                "_id": ObjectId(id_str)
+            }
+        ]
+    })
+    num_found = len(list(cursor))
+
+    # if none found, error
+    if num_found == 0:
+        return jsonify({"message": "no rule found with given _id"}), 404
+
+    # delete
+    db["Rules"].delete_many({
+        "$or": [
+            {
+                "_id": id_str
+            },
+            {
+                "_id": ObjectId(id_str)
+            }
+        ]
+    })
+
+    return jsonify({"message": "success"})
