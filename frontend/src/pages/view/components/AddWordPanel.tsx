@@ -96,6 +96,7 @@ export default function AddWordPanel() {
                     </div>
 
                     {/* other fields */}
+                    <AddWordInput display="Special instructions" />
                     <div class="flex justify-between">
                         <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
                         <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
