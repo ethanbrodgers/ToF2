@@ -41,12 +41,14 @@ export default function ViewPage() {
     // view state variable: default is first option
     const [view, setView] = React.useState(Object.keys(viewOptions)[0]);
 
-    return ( <div className="min-h-screen flex flex-col">
+    return ( <div className="h-screen flex flex-col">
         <Navbar />
-        <div className="flex grow gap-16">
+        <div className="flex grow gap-16 min-h-0">
             <Options langOptions={langOptions} setLang={setLang} viewOptions={viewOptions} setView={setView} />
-            <div className="grow items-stretch flex flex-col justify-between">
-                <GridDisplay mode={view} lang={lang} />
+            <div className="grow flex flex-col min-h-0 justify-between">
+                <div className="overflow-y-auto min-h-0 border-3 border-gray-500">
+                    <GridDisplay mode={view} lang={lang} />
+                </div>
                 <AddWordPanel />
             </div>
         </div>

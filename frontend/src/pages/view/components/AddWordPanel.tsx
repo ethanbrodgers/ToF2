@@ -77,46 +77,72 @@ export default function AddWordPanel() {
 
     return ( <div className="w-full">
         {/* expandable */}
-        <div className="bg-gray-200 overflow-hidden transition-all" style={{
-            height: (expanded) ? "500px" : "0"
+        <div className="bg-gray-200 overflow-hidden transition-all border-3 border-gray-500 border-t-0" style={{
+            height: (expanded) ? "400px" : "0"
         }}>
-            <p className="text-5xl">Add a word</p>
-            <AddWordSelect field="lang" display="Language" setToAddField={setToAddField} options={{
-                "Spanish": "es",
-                "French": "fr",
-                "Chinese": "zh",
-                "Russian": "ru"
-            }}/>
-            <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
-                "Noun": "n",
-                "Pronoun": "p",
-                "Verb": "v",
-                "Adjective": "adj",
-                "Adverb": "adv",
-                "Connector": "c",
-                "Interjection": "i",
-                "Quantifier": "q"
-            }} />
-            <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
-            <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
-            <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
-            <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
-                "None": null,
-                "Masculine": "m",
-                "Feminine": "f",
-                "Neuter": "n"
-            }} />
-            <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
-            <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
-            {/* ex */}
-            
+            <div className="flex h-full items-stretch">
+                {/* enter-fields panel */}
+                <div className="flex-1 relative p-4 pt-0">
+                    {/* header */}
+                    <div className="flex gap-2 items-baseline mx-auto w-fit">
+                        <p className="text-5xl">Add a</p>
+                        <AddWordSelect field="lang" header={true} setToAddField={setToAddField} options={{
+                            "Spanish": "es",
+                            "French": "fr",
+                            "Chinese": "zh",
+                            "Russian": "ru"
+                        }}/>
+                        <p className="text-5xl">word</p>
+                    </div>
+
+                    {/* other fields */}
+                    <div class="flex justify-between">
+                        <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
+                        <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
+                    </div>
+                    <div class="flex justify-between">
+                        <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
+                    </div>
+                    <div class="flex justify-between">
+                        <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
+                            "Noun": "n",
+                            "Pronoun": "p",
+                            "Verb": "v",
+                            "Adjective": "adj",
+                            "Adverb": "adv",
+                            "Connector": "c",
+                            "Interjection": "i",
+                            "Quantifier": "q"
+                        }} />
+                        <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
+                            "None": null,
+                            "Masculine": "m",
+                            "Feminine": "f",
+                            "Neuter": "n"
+                        }} />
+                        <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
+                    </div>
+                    
+                    
+                    
+                    
+                    {/* ex */}
+                    
+                    {/* notice display */}
+                    <div className="absolute bottom-0 left-0 h-8">
+                        {notice && <AddWordNotice type={notice.type} key={notice.key}>{notice.text}</AddWordNotice>}
+                    </div>
+                </div>
+
+                {/* see-completions panel */}
+                <div className="flex-1 p-4">
+                    <p>[See completions goes here]</p>
+                </div>
+            </div>
 
         </div>
 
-        {/* notice display */}
-        <div className="h-8 border">
-            {notice && <AddWordNotice type={notice.type} key={notice.key}>{notice.text}</AddWordNotice>}
-        </div>
 
         {/* big plus button (and x button) */}
         <div className="relative">
