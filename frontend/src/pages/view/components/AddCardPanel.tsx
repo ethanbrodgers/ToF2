@@ -3,6 +3,7 @@ import { useAddWord, useAddRule, useAddNorm } from '@/services/useQueries';
 import AddCardInput from './AddCardInput';
 import AddCardSelect from './AddCardSelect';
 import AddCardNotice from './AddCardNotice';
+import AddCardExList from './AddCardExList';
 
 
 // default values for each mode
@@ -58,7 +59,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // state var: word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
-    console.log(toAdd);
+    console.log("toAdd", toAdd);
     // state var: addData, adds word/rule/norm to backend
     const mutateResults = {
         words: useAddWord(),
@@ -209,6 +210,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                             }} />
                             <AddCardInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
                         </div>
+                        <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     : (mode === "rules") ? <div>
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
@@ -220,10 +222,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     </div>
                     : <p>Mode not implemented: "{mode}"</p>}
                     
-                    
-                    
-                    
-                    {/* ex */}
                     
                     {/* notice display */}
                     <div className="absolute bottom-0 left-0 h-8">

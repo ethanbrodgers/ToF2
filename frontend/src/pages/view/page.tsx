@@ -37,18 +37,18 @@ const modeOptions = {
 export default function ViewPage() {
     // language state variable: default value is first language in options
     const [lang, setLang] = React.useState(Object.keys(langOptions)[0]);
-    // view state variable: default is first option
-    const [view, setView] = React.useState(Object.keys(modeOptions)[0]);
+    // mode state variable: default is first option
+    const [mode, setMode] = React.useState(Object.keys(modeOptions)[0]);
 
     return ( <div className="h-screen flex flex-col">
         <Navbar />
         <div className="flex grow gap-16 min-h-0">
-            <Options langOptions={langOptions} setLang={setLang} modeOptions={modeOptions} setMode={setView} />
+            <Options langOptions={langOptions} setLang={setLang} modeOptions={modeOptions} setMode={setMode} />
             <div className="grow flex flex-col min-h-0 justify-between">
                 <div className="overflow-y-auto min-h-0 border-3 border-gray-500">
-                    <GridDisplay mode={view} lang={lang} />
+                    <GridDisplay mode={mode} lang={lang} />
                 </div>
-                <AddCardPanel lang={lang} setLang={setLang} mode={view} setMode={setView} />
+                <AddCardPanel lang={lang} setLang={setLang} mode={mode} setMode={setMode} />
             </div>
         </div>
     </div> );
