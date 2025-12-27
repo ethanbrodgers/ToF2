@@ -21,7 +21,7 @@ import React from 'react';
  * @param {Function} [props.setStateVar] - The setter function for stateVar. Will be used to link
  * this select's value to the value of the state variable.
  */
-export default function AddWordInput({field, header=false, display, setToAddField, options, stateVar, setStateVar}: {field?: string, header?: boolean, display?: string, setToAddField?: Function, options: Object, stateVar?: string, setStateVar?: Function}) {
+export default function AddCardSelect({field, header=false, display, setToAddField, options, stateVar, setStateVar}: {field?: string, header?: boolean, display?: string, setToAddField?: Function, options: Object, stateVar?: string, setStateVar?: Function}) {
     return ( <div>
         {display && <p className="inline mr-2">{display}:</p>}
         <select

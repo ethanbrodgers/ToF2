@@ -1,8 +1,8 @@
 import React from 'react';
 import { useAddWord, useAddRule, useAddNorm } from '@/services/useQueries';
-import AddWordInput from './AddWordInput';
-import AddWordSelect from './AddWordSelect';
-import AddWordNotice from './AddWordNotice';
+import AddCardInput from './AddCardInput';
+import AddCardSelect from './AddCardSelect';
+import AddCardNotice from './AddCardNotice';
 
 
 // default values for each mode
@@ -35,7 +35,7 @@ const DEFAULTS = {
 }
 
 /**
- * The panel that allows you to add a word.
+ * The panel that allows you to add a card (a word, rule, or norm).
  * Visible as a plus button when collapsed, and clicking the
  * collapsed button reveals a panel where you enter the fields
  * of the data you want to add.
@@ -45,12 +45,12 @@ const DEFAULTS = {
  * being viewed on the view page
  * @param {Function} props.setLang - The state mutator function that sets
  * the language being viewed on the view page. Usage example: setLang("es");
- * @param {string} props. - The state variable representing the type of data
+ * @param {string} props.mode - The state variable representing the type of data
  * (words, rules, norms) being viewed on the view page
  * @param {Function} props.setMode - The state mutator function that sets
  * the type of data being viewed on the view page. Usage example: setMode("words");
  */
-export default function AddWordPanel({lang, setLang, mode, setMode}: {lang: string, setLang: Function, mode: string, setMode: Function}) {
+export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: string, setLang: Function, mode: string, setMode: Function}) {
     // ==== state vars ====
 
     // state var: expanded
@@ -166,13 +166,13 @@ export default function AddWordPanel({lang, setLang, mode, setMode}: {lang: stri
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
                         <p className="text-5xl">Add a</p>
-                        <AddWordSelect header={true} options={{
+                        <AddCardSelect header={true} options={{
                             "Spanish": "es",
                             "French": "fr",
                             "Chinese": "zh",
                             "Russian": "ru"
                         }} stateVar={lang} setStateVar={setLang} />
-                        <AddWordSelect header={true} options={{
+                        <AddCardSelect header={true} options={{
                             "Word": "words",
                             "Rule": "rules",
                             "Norm": "norms"
@@ -181,17 +181,17 @@ export default function AddWordPanel({lang, setLang, mode, setMode}: {lang: stri
 
                     {/* word/rule/norm fields */}
                     {(mode === "words") ? <div>
-                        <AddWordInput display="Special instructions" />
+                        <AddCardInput display="Special instructions" />
                         <div className="flex justify-between">
-                            <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
-                            <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
+                            <AddCardInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
+                            <AddCardInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
                         </div>
                         <div className="flex justify-between">
-                            <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
-                            <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
+                            <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                            <AddCardInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
                         </div>
                         <div className="flex justify-between">
-                            <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
+                            <AddCardSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
                                 "Noun": "n",
                                 "Pronoun": "p",
                                 "Verb": "v",
@@ -201,22 +201,22 @@ export default function AddWordPanel({lang, setLang, mode, setMode}: {lang: stri
                                 "Interjection": "i",
                                 "Quantifier": "q"
                             }} />
-                            <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
+                            <AddCardSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
                                 "None": null,
                                 "Masculine": "m",
                                 "Feminine": "f",
                                 "Neuter": "n"
                             }} />
-                            <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
+                            <AddCardInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
                         </div>
                     </div>
                     : (mode === "rules") ? <div>
-                        <AddWordInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
-                        <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
+                        <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                     </div>
                     : (mode === "norms") ? <div>
-                        <AddWordInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
-                        <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
+                        <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                     </div>
                     : <p>Mode not implemented: "{mode}"</p>}
                     
@@ -227,7 +227,7 @@ export default function AddWordPanel({lang, setLang, mode, setMode}: {lang: stri
                     
                     {/* notice display */}
                     <div className="absolute bottom-0 left-0 h-8">
-                        {notice && <AddWordNotice type={notice.type} key={notice.key}>{notice.text}</AddWordNotice>}
+                        {notice && <AddCardNotice type={notice.type} key={notice.key}>{notice.text}</AddCardNotice>}
                     </div>
                 </div>
 

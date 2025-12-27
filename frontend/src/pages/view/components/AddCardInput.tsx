@@ -13,7 +13,7 @@ import React from 'react';
  * @param {any} [props.defaultVal] - (optional) the value to set the given field to if the value of
  * this select is empty (""). Set to "" by default
  */
-export default function AddWordInput({field, display, setToAddField, defaultVal=""}: {field?: string, display: string, setToAddField?: Function, defaultVal?: any}) {
+export default function AddCardInput({field, display, setToAddField, defaultVal=""}: {field?: string, display: string, setToAddField?: Function, defaultVal?: any}) {
     return ( <div>
         <p className="inline mr-2">{display}:</p>
         <input className="inline border-b" type="text" onChange={(event) => {

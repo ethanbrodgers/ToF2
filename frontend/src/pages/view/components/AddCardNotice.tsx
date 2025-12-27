@@ -8,14 +8,14 @@ const typeColors = {
 }
 
 /**
- * Creates a displayed message to be used in AddWordPanel. Fades away 4 seconds after creation.
+ * Creates a displayed message to be used in AddCardPanel. Fades away 4 seconds after creation.
  * 
  * @param {Object} props - object props
- * @param {string} props.children - The text of the notice, placed in between the <AddWordNotice> tags
+ * @param {string} props.children - The text of the notice, placed in between the <AddCardNotice> tags
  * @param {"loading" | "error" | "success"} props.type - The type of notice.
  * Determines the color of the displayed message.
  */
-export default function AddWordNotice({type, children}: {type: "loading" | "error" | "success", children: string, key?: any}) {
+export default function AddCardNotice({type, children}: {type: "loading" | "error" | "success", children: string, key?: any}) {
     // state var: whether or not has started fading
     const [fading, setFading] = React.useState(false);
 
