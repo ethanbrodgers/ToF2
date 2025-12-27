@@ -1,19 +1,37 @@
 import React from 'react';
-import { useAddWord } from '@/services/useQueries';
+import { useAddWord, useAddRule, useAddNorm } from '@/services/useQueries';
 import AddWordInput from './AddWordInput';
 import AddWordSelect from './AddWordSelect';
 import AddWordNotice from './AddWordNotice';
 
-const defaultWord = {
-    lang: "es",
-    en: null,
-    targ: null,
-    def: "[None provided]",
-    pos: "n",
-    gender: null,
-    trans: null,
-    desc: "[None provided]",
-    ex: []
+
+// default values for each mode
+const DEFAULTS = {
+    words: {
+        lang: "es",
+        en: null,
+        targ: null,
+        def: "[None provided]",
+        pos: "n",
+        gender: null,
+        trans: null,
+        desc: "[None provided]",
+        ex: []
+    },
+    rules: {
+        lang: "es",
+        title: null,
+        def: "[None provided]",
+        notes: [],
+        ex: []
+    },
+    norms: {
+        lang: "es",
+        title: null,
+        def: "[None provided]",
+        notes: [],
+        ex: []
+    }
 }
 
 /**
@@ -27,49 +45,104 @@ const defaultWord = {
  * being viewed on the view page
  * @param {Function} props.setLang - The state mutator function that sets
  * the language being viewed on the view page. Usage example: setLang("es");
+ * @param {string} props. - The state variable representing the type of data
+ * (words, rules, norms) being viewed on the view page
+ * @param {Function} props.setMode - The state mutator function that sets
+ * the type of data being viewed on the view page. Usage example: setMode("words");
  */
-export default function AddWordPanel({lang, setLang}: {lang: string, setLang: Function}) {
+export default function AddWordPanel({lang, setLang, mode, setMode}: {lang: string, setLang: Function, mode: string, setMode: Function}) {
+    // ==== state vars ====
+
     // state var: expanded
     const [expanded, setExpanded] = React.useState(false);
-    // state var: word to add
-    const [toAdd, setToAdd] = React.useState(defaultWord);
+    // state var: word/rule/norm to add
+    const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
+    toAdd.lang = lang;
     console.log(toAdd);
-    // state vars: add word
-    const { mutate: addWord, isPending, isError, error, isSuccess } = useAddWord();
+    // state var: addData, adds word/rule/norm to backend
+    const mutateResults = {
+        words: useAddWord(),
+        rules: useAddRule(),
+        norms: useAddNorm()
+    }
+    const { mutate: addData } = mutateResults[mode];
     // state var: notice to display
     const [notice, setNotice]: [{
         type: "loading" | "error" | "success", text: string, key?: any
     }, Function] = React.useState(null);
+    
+
+
+    // ==== helper functions ====
+
     // makes and displays a new notice
     function makeNotice(type: "loading" | "error" | "success", text: string) {
         setNotice({type, text, key: Date.now()});
     }
 
-    // executes plus button functionality
+    // executes plus button functionality (expand and add data)
     function plusButtonFunc() {
         // if collapsed: expand
         if (!expanded) {
             setExpanded(true);
         } else {
-            // else, attempt to add word
-            if (toAdd.en && toAdd.targ) {
-                addWord(toAdd, {
-                    // function to run when added successfully
-                    onSuccess: () => {
-                        makeNotice("success", "Word added")
-                    },
-                    // function to run when error
-                    onError: (error) => {
-                        makeNotice("error", `Error adding word: ${error.message}`);
-                    }
-                });
-                // key: Date.now() makes this notice unique from any identical notice that might be
-                // created afterward. Important for making the fading behavior work properly.
-                makeNotice("loading", "Loading...")
+            // else, attempt to add
+            if (mode === "words") {
+                if (toAdd.en && toAdd.targ) {
+                    addData(toAdd, {
+                        // function to run when added successfully
+                        onSuccess: () => {
+                            makeNotice("success", "Word added")
+                        },
+                        // function to run when error
+                        onError: (error) => {
+                            makeNotice("error", `Error adding word: ${error.message}`);
+                        }
+                    });
+                    makeNotice("loading", "Loading...")
+                }
+                else {
+                    console.error("Tried to add invalid word");
+                    makeNotice("error", "Word must have English and Target");
+                }
             }
-            else {
-                console.error("Tried to add invalid word");
-                makeNotice("error", "Word must have English and Target");
+            else if (mode === "rules") {
+                if (toAdd.title) {
+                    addData(toAdd, {
+                        // function to run when added successfully
+                        onSuccess: () => {
+                            makeNotice("success", "Rule added")
+                        },
+                        // function to run when error
+                        onError: (error) => {
+                            makeNotice("error", `Error adding rule: ${error.message}`);
+                        }
+                    });
+                    makeNotice("loading", "Loading...")
+                }
+                else {
+                    console.error("Tried to add invalid rule");
+                    makeNotice("error", "Word must have title");
+                }
+            }
+            else if (mode === "norms") {
+                if (toAdd.title) {
+                    addData(toAdd, {
+                        // function to run when added successfully
+                        onSuccess: () => {
+                            makeNotice("success", "Norm added")
+                        },
+                        // function to run when error
+                        onError: (error) => {
+                            makeNotice("error", `Error adding norm: ${error.message}`);
+                        }
+                    });
+                    makeNotice("loading", "Loading...")
+                }
+                else {
+                    console.error("Tried to add invalid norm");
+                    makeNotice("error", "Norm must have title");
+                }
             }
         }
     }
@@ -78,6 +151,9 @@ export default function AddWordPanel({lang, setLang}: {lang: string, setLang: Fu
     function setToAddField(obj) {
         setToAdd({...toAdd, ...obj});
     }
+
+
+    // ==== JSX ====
 
     return ( <div className="w-full">
         {/* expandable */}
@@ -90,44 +166,59 @@ export default function AddWordPanel({lang, setLang}: {lang: string, setLang: Fu
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
                         <p className="text-5xl">Add a</p>
-                        <AddWordSelect field="lang" header={true} setToAddField={setToAddField} options={{
+                        <AddWordSelect header={true} options={{
                             "Spanish": "es",
                             "French": "fr",
                             "Chinese": "zh",
                             "Russian": "ru"
                         }} stateVar={lang} setStateVar={setLang} />
-                        <p className="text-5xl">word</p>
+                        <AddWordSelect header={true} options={{
+                            "Word": "words",
+                            "Rule": "rules",
+                            "Norm": "norms"
+                        }} stateVar={mode} setStateVar={setMode} />
                     </div>
 
-                    {/* other fields */}
-                    <AddWordInput display="Special instructions" />
-                    <div className="flex justify-between">
-                        <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
-                        <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
+                    {/* word/rule/norm fields */}
+                    {(mode === "words") ? <div>
+                        <AddWordInput display="Special instructions" />
+                        <div className="flex justify-between">
+                            <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
+                            <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
+                        </div>
+                        <div className="flex justify-between">
+                            <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                            <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
+                        </div>
+                        <div className="flex justify-between">
+                            <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
+                                "Noun": "n",
+                                "Pronoun": "p",
+                                "Verb": "v",
+                                "Adjective": "adj",
+                                "Adverb": "adv",
+                                "Connector": "c",
+                                "Interjection": "i",
+                                "Quantifier": "q"
+                            }} />
+                            <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
+                                "None": null,
+                                "Masculine": "m",
+                                "Feminine": "f",
+                                "Neuter": "n"
+                            }} />
+                            <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
+                        </div>
                     </div>
-                    <div className="flex justify-between">
+                    : (mode === "rules") ? <div>
+                        <AddWordInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
-                        <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
                     </div>
-                    <div className="flex justify-between">
-                        <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
-                            "Noun": "n",
-                            "Pronoun": "p",
-                            "Verb": "v",
-                            "Adjective": "adj",
-                            "Adverb": "adv",
-                            "Connector": "c",
-                            "Interjection": "i",
-                            "Quantifier": "q"
-                        }} />
-                        <AddWordSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
-                            "None": null,
-                            "Masculine": "m",
-                            "Feminine": "f",
-                            "Neuter": "n"
-                        }} />
-                        <AddWordInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
+                    : (mode === "norms") ? <div>
+                        <AddWordInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
+                        <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                     </div>
+                    : <p>Mode not implemented: "{mode}"</p>}
                     
                     
                     

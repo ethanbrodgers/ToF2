@@ -67,7 +67,6 @@ export async function getWords(lang: string): Promise<Array<wordType>> {
 /**
  * Add a word.
  * @param {wordType} word - The word to add
- * @return A promise resolving to the returned message (either "success" or an error message)
  */
 export async function addWord(word: wordType): Promise<void> {
     await apiCall("/vocab", "PUT", word, null, null)
@@ -85,8 +84,36 @@ export async function getRules(lang: string): Promise<Array<ruleNormType>> {
     .then(response => response.rules)
 }
 
+/**
+ * Add a rule.
+ * @param {ruleNormType} rule - The rule to add
+ */
+export async function addRule(rule: ruleNormType): Promise<void> {
+    await apiCall("/grammar", "PUT", rule, null, null)
+    .then(async response => {
+        if (!response.ok) {
+            const message = (await response.json()).message;
+            throw new Error(message);
+        }
+    });
+}
+
 export async function getNorms(lang: string): Promise<Array<ruleNormType>> {
     return apiCall("/style", "GET", null, {lang: lang}, null)
     .then(response => response.json())
     .then(response => response.norms)
+}
+
+/**
+ * Add a norm.
+ * @param {ruleNormType} norm - The norm to add
+ */
+export async function addNorm(norm: ruleNormType): Promise<void> {
+    await apiCall("/style", "PUT", norm, null, null)
+    .then(async response => {
+        if (!response.ok) {
+            const message = (await response.json()).message;
+            throw new Error(message);
+        }
+    });
 }
