@@ -101,15 +101,15 @@ export default function AddWordPanel({lang, setLang}: {lang: string, setLang: Fu
 
                     {/* other fields */}
                     <AddWordInput display="Special instructions" />
-                    <div class="flex justify-between">
+                    <div className="flex justify-between">
                         <AddWordInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
                         <AddWordInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
                     </div>
-                    <div class="flex justify-between">
+                    <div className="flex justify-between">
                         <AddWordInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                         <AddWordInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
                     </div>
-                    <div class="flex justify-between">
+                    <div className="flex justify-between">
                         <AddWordSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
                             "Noun": "n",
                             "Pronoun": "p",
