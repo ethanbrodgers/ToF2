@@ -26,9 +26,10 @@ class PosEnum(Enum):
     c = "c"
     q = "q"
 
-class WordExSentence(BaseModel):
+class ExSentence(BaseModel):
     en: str = Field(description="The English translation of this example sentence")
     targ: str = Field(description="The target (non-English) langauge translation of this example sentence")
+    positive: bool = Field(description="Whether this is an example of a good usage or a bad usage of the concept")
 
 class Word(BaseModel):
     lang: str = Field(description="Two-letter ISO code for the non-English language, ex. 'es' for Spanish")
@@ -41,4 +42,4 @@ class Word(BaseModel):
     gender: GenderEnum | None = Field(default=None, description="Gender of the word; m for masculine, f for feminine, n for neuter, and null for no gender. Only applicable for nouns.")
     trans: str | None = Field(default=None, description="Transliteration to the Latin alphabet using the standard system for this language. Set this to null if the language already uses the Latin alphabet.")
     desc: str = Field(description="a text-based description of the word, including any special information about how to use this word. Don't include any basic information such as the word's gender.")
-    ex: list[WordExSentence] = Field(description="1 to 3 example sentences that show how to use this word")
+    ex: list[ExSentence] = Field(description="1 to 3 example sentences that show how to use this word")

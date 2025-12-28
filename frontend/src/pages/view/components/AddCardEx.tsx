@@ -1,4 +1,5 @@
 import React from 'react';
+import { wordType, ruleNormType} from '@/types';
 
 /**
  * Represents an example sentence while adding a piece of user data. Lets the user
@@ -6,11 +7,11 @@ import React from 'react';
  * 
  * @param {Object} props - object props
  * 
- * @param {Object} props.toAdd - the state variable holding the word/rule/norm to add
+ * @param {wordType | ruleNormType} props.toAdd - the state variable holding the word/rule/norm to add
  * from AddCardPanel
  * @param {Function} props.setToAdd - the mutator for toAdd
  */
-export default function AddCardEx({toAdd, setToAdd, index}: {toAdd: Object, setToAdd: Function, index: number, key?: any}) {
+export default function AddCardEx({toAdd, setToAdd, index}: {toAdd: wordType | ruleNormType, setToAdd: Function, index: number, key?: any}) {
     const [positive, setPositive] = React.useState(true);
 
     return ( <div className="flex gap-3 m-2">

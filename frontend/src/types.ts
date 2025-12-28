@@ -17,7 +17,8 @@ export type wordType = {
     desc: string,
     ex: Array<{
         en: string,
-        targ: string
+        targ: string,
+        positive: boolean
     }>
 }
 

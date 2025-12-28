@@ -1,16 +1,17 @@
 import React from 'react';
 import AddCardEx from './AddCardEx';
+import { wordType, ruleNormType} from '@/types';
 
 /**
  * A component that allows the user to add, edit, and remove example sentences from
  * a piece of user data
  * 
  * @param {Object} props - object props
- * @param {Object} props.toAdd - the state variable holding the word/rule/norm to add
+ * @param {wordType | ruleNormType} props.toAdd - the state variable holding the word/rule/norm to add
  * from AddCardPanel
  * @param {Function} props.setToAdd - the mutator for toAdd
  */
-export default function AddCardExList({toAdd, setToAdd}: {toAdd: Object, setToAdd: Function}) {
+export default function AddCardExList({toAdd, setToAdd}: {toAdd: wordType | ruleNormType, setToAdd: Function}) {
     console.log("toAdd", toAdd)
 
     return ( <div>
