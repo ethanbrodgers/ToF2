@@ -163,7 +163,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         }}>
             <div className="flex h-full items-stretch">
                 {/* enter-fields panel */}
-                <div className="flex-1 relative p-4 pt-0">
+                <div className="flex-1 relative p-4 pt-0 min-h-0 overflow-y-auto">
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
                         <p className="text-5xl">Add a</p>
@@ -215,10 +215,12 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     : (mode === "rules") ? <div>
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     : (mode === "norms") ? <div>
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     : <p>Mode not implemented: "{mode}"</p>}
                     

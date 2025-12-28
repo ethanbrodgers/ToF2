@@ -17,7 +17,7 @@ export default function AddCardExList({toAdd, setToAdd}: {toAdd: Object, setToAd
         <p>Example sentences:</p>
         {toAdd.ex.map((sentence, i) => <AddCardEx toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}
         <button
-            className="bg-blue-400 w-6 h-6"
+            className="bg-blue-400 w-6 h-6 cursor-pointer"
             onClick={() => {
                 setToAdd({
                     ...toAdd,
