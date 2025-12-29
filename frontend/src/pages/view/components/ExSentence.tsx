@@ -1,3 +1,6 @@
+import React from 'react';
+import { exSentenceType } from '@/types';
+
 /**
  * Example sentence for a rule, word, etc.
  * 
@@ -9,7 +12,7 @@
  * 
  * @param {string} props.children.targ - example sentence in the target language
  */
-export default function ExSentence({children: {en, targ, positive} }: {children: {en: string, targ: string, positive?: boolean}, key?: any}) {
+export default function ExSentence({children: {en, targ, positive} }: {children: exSentenceType, key?: any}) {
     return ( <div>
         <p className={(positive === false) ? "text-red-400" : "text-green-400"}>{targ}</p>
         <p>{en}</p>
