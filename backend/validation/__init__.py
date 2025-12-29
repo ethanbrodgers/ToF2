@@ -1,3 +1,3 @@
-from .validation_models import Word
+from .validation_models import Word, LookupPromptWord, LookupChoiceWord
 
-__all__ = ["Word"]
+__all__ = ["Word", "LookupPromptWord", "LookupChoiceWord"]
