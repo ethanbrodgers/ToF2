@@ -4,6 +4,7 @@ import AddCardInput from './AddCardInput';
 import AddCardSelect from './AddCardSelect';
 import AddCardNotice from './AddCardNotice';
 import AddCardExList from './AddCardExList';
+import AddCardNotesList from './AddCardNotesList';
 
 
 // default values for each mode
@@ -216,6 +217,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
+                        <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     : (mode === "norms") ? <div>
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
