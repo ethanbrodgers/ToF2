@@ -72,6 +72,10 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     const [notice, setNotice]: [{
         type: "loading" | "error" | "success", text: string, key?: any
     }, Function] = React.useState(null);
+    // effect to switch toAdd value to match a change in mode
+    React.useEffect(() => {
+        setToAdd(DEFAULTS[mode])
+    }, [mode]);
     
 
 
@@ -182,7 +186,8 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     </div>
 
                     {/* word/rule/norm fields */}
-                    {(mode === "words") ? <div>
+                    {/* word fields (make sure data is actually a word by checking en field)*/}
+                    {(mode === "words" && "en" in toAdd) ? <div>
                         <AddCardInput display="Special instructions" />
                         <div className="flex justify-between">
                             <AddCardInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
@@ -213,18 +218,20 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                         </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
-                    : (mode === "rules") ? <div>
+                    // rule fields (make sure data is actually a rule by checking title field)
+                    : (mode === "rules" && "title" in toAdd) ? <div>
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
-                    : (mode === "norms") ? <div>
+                    // norm fields (make sure data is actually a norm by checking title field)
+                    : (mode === "norms" && "title" in toAdd) ? <div>
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
-                    : <p>Mode not implemented: "{mode}"</p>}
+                    : <p>stergsrgvdrththftyhdtrhdrtgdrtgcdrgdrtgcdtrgMode not implemented: "{mode}"</p>}
                     
                     
                     {/* notice display */}
