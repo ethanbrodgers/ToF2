@@ -88,7 +88,7 @@ def word_lookup_ai():
         return jsonify({"message": "Lookup failed"}), 502
 
     if hasattr(lookup_result, "model_dump"):
-        result_payload = lookup_result.model_dump(by_alias=True)
+        result_payload = lookup_result.model_dump(by_alias=True, mode="json")
     else:
         result_payload = lookup_result
 
