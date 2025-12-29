@@ -32,7 +32,7 @@ class WordExSentence(BaseModel):
     # Fully specified example sentence for a word.
     model_config = ConfigDict(extra="forbid")
     en: str = Field(description="The English translation of this example sentence")
-    targ: str = Field(description="The target (non-English) langauge translation of this example sentence")
+    targ: str = Field(description="The target (non-English) language translation of this example sentence")
     positive: bool = Field(description="Whether this example sentence uses the word correctly")
 
 class Word(BaseModel):
@@ -53,7 +53,7 @@ class Word(BaseModel):
 class WordExSentencePartial(BaseModel):
     # Partial example sentence for AI lookup prompts.
     en: str | None = Field(default=None, description="The English translation of this example sentence")
-    targ: str | None = Field(default=None, description="The target (non-English) langauge translation of this example sentence")
+    targ: str | None = Field(default=None, description="The target (non-English) language translation of this example sentence")
     positive: bool | None = Field(default=None, description="Whether this example sentence uses the word correctly")
 
 class WordPartial(BaseModel):
