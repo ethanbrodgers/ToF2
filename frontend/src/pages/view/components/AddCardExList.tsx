@@ -12,8 +12,6 @@ import { wordType, ruleNormType} from '@/types';
  * @param {Function} props.setToAdd - the mutator for toAdd
  */
 export default function AddCardExList({toAdd, setToAdd}: {toAdd: wordType | ruleNormType, setToAdd: Function}) {
-    console.log("toAdd", toAdd)
-
     return ( <div>
         <p>Example sentences:</p>
         {toAdd.ex.map((sentence, i) => <AddCardEx toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}

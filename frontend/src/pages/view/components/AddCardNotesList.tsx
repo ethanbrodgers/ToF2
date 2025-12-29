@@ -12,8 +12,6 @@ import { ruleNormType } from '@/types';
  * @param {Function} props.setToAdd - the mutator for toAdd
  */
 export default function AddCardNotesList({toAdd, setToAdd}: {toAdd: ruleNormType, setToAdd: Function}) {
-    console.log("toAddNotesList, toAdd:", toAdd)
-
     return ( <div>
         <p>Notes:</p>
         {toAdd.notes.map((note, i) => <AddCardNote toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}

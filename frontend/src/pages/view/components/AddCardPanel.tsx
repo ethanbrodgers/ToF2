@@ -60,7 +60,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // state var: word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
-    console.log("toAdd", toAdd);
     // state var: addData, adds word/rule/norm to backend
     const mutateResults = {
         words: useAddWord(),
@@ -128,7 +127,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 }
                 else {
                     console.error("Tried to add invalid rule");
-                    makeNotice("error", "Word must have title");
+                    makeNotice("error", "Rule must have title");
                 }
             }
             else if (mode === "norms") {
@@ -230,8 +229,9 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                         <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
                         <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
+                        <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
-                    : <p>stergsrgvdrththftyhdtrhdrtgdrtgcdrgdrtgcdtrgMode not implemented: "{mode}"</p>}
+                    : <p>Mode not implemented: "{mode}"</p>}
                     
                     
                     {/* notice display */}
