@@ -4,7 +4,8 @@
 # They can be imported from the validation package. See the file "__init__.py" in the same folder as this file to make more models importable.
 # Please add your own Pydantic models to this file to suit your needs! You can also change the descriptions of existing models to add more clarifications for the AI (it can read these descriptions).
 
-from pydantic import BaseModel, Field, ConfigDict
+from typing import Annotated
+from pydantic import BaseModel, Field, ConfigDict, RootModel
 from enum import Enum
 
 
@@ -85,3 +86,7 @@ class LookupChoiceWord(BaseModel):
     model_config = ConfigDict(extra="forbid")
     desc: str = Field(description="Summary of this choice.")
     word: Word = Field(description="A complete word object matching the word schema.")
+
+class LookupResultWord(RootModel[Annotated[list[LookupChoiceWord], Field(max_length=5)]]):
+    # Ordered list of lookup options (most to least likely), capped at 5.
+    pass
