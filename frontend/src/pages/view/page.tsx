@@ -27,9 +27,6 @@ const modeOptions = {
     },
     norms: {
         display: "Norms"
-    },
-    passages: {
-        display: "Passages"
     }
 }
 
