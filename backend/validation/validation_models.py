@@ -87,6 +87,7 @@ class LookupChoiceWord(BaseModel):
     desc: str = Field(description="Summary of this choice.")
     word: Word = Field(description="A complete word object matching the word schema.")
 
-class LookupResultWord(RootModel[Annotated[list[LookupChoiceWord], Field(max_length=5)]]):
-    # Ordered list of lookup options (most to least likely), capped at 5.
-    pass
+class LookupResultWord(BaseModel):
+    # Object containing an ordered list of lookup options (most to least likely), capped at 5.
+    model_config = ConfigDict(extra="forbid")
+    choices: Annotated[list[LookupChoiceWord], Field(max_length=5)] = Field(description="Ordered list of lookup options (most to least likely), capped at 5.")
