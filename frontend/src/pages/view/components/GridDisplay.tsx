@@ -28,13 +28,6 @@ export default function GridDisplay({mode, lang}: {mode: string, lang: string}) 
         rules: useRules(lang),
         norms: useNorms(lang)
     }
-
-    // handle non-implemented mode
-    const implementedModes = ["words", "rules", "norms"]
-    if (!(implementedModes.includes(mode))) {
-        console.error(`GridDisplay received non-implemented mode "${mode}"`);
-        return <p>Mode "{mode}" not implemented</p>
-    }
     
     // state variable: stores array of words, rules, etc.
     const { data, isLoading, isError, error } = queryResults[mode];
