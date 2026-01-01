@@ -6,7 +6,19 @@ The collapsable options menu
 setLang: state modifier for language
 */
 export default function OptionsBar({langOptions, setLang, modeOptions, setMode}: {langOptions: any, setLang: any, modeOptions: any, setMode: any}) {
-    return ( <div className="bg-slate-200 transition-all duration-150 relative w-5 hover:w-[600px]">
+    const [expanded, setExpanded] = React.useState(false);
+
+    // event handlers for expand-on-hover feature
+    function onMouseEnter(e) {
+        setExpanded(true);
+    }
+    function onMouseLeave(e) {
+        // checks for positive x position because some browsers have a little border to the left of the website, and hovering over this border (x < 0) triggers onMouseLeave
+        if (e.clientX >= 0) setExpanded(false);
+    }
+    return ( <div className="bg-slate-200 transition-all duration-150 relative" style={{
+        width: (expanded) ? "600px" : "20px"
+    }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         <div className="overflow-hidden">
             {/* language */}
             <Option
