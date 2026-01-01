@@ -1,9 +1,13 @@
 # vocab.py: blueprint for routes related to vocabulary words
 
 from flask import Blueprint, request, jsonify, current_app
+import json
+import os
+from pydantic import ValidationError
 from bson import ObjectId
 from ..utils import serialize_list
-from services import db
+from services import db, call_chatgpt
+from validation import LookupPromptWord, LookupChoiceWord, LookupResultWord
 
 bp = Blueprint("vocab", __name__)
 
@@ -29,6 +33,68 @@ def word_lookup_query_param():
 
     # return
     return jsonify({"words": words})
+
+# word lookup (AI-assisted)
+@bp.route("/lookup", methods=["POST"])
+def word_lookup_ai():
+    req_body = request.get_json(silent=True)
+    if req_body is None:
+        return jsonify({"message": "No JSON body provided"}), 400
+
+    # input validation
+    try:
+        lookup_prompt = LookupPromptWord.model_validate(req_body)
+    except ValidationError as exc:
+        return jsonify({"message": "Invalid lookup prompt", "details": exc.errors()}), 400
+
+    prompt_word = {}
+    if lookup_prompt.word is not None:
+        prompt_word = lookup_prompt.word.model_dump(by_alias=True, exclude_none=True, mode="json")
+
+    if not lookup_prompt.desc and not prompt_word:
+        return jsonify({"message": "Lookup prompt must include desc or word fields"}), 400
+
+    prompt_payload = {"desc": lookup_prompt.desc}
+    if prompt_word:
+        prompt_payload["word"] = prompt_word
+
+    system_prompt = (
+        "You are a bilingual lexicography assistant. Output JSON only that matches the LookupResultWord schema: "
+        "a JSON array of LookupChoiceWord objects, each with keys {\"desc\": str, \"word\": Word}. "
+        "Word fields: lang (2-letter ISO), en, targ, def, pos, gender, trans, desc, ex. "
+        "Allowed pos values: n, p, v, adj, adv, c, i, q. "
+        "Gender values: m, f, n, or null for no gender. "
+        "Use null for trans when the language already uses the Latin alphabet. "
+        "ex must be 1 to 3 example sentences with en, targ, positive. "
+        "Preserve any user-provided fields exactly; fill missing fields with best-fit values. "
+        "Do not include _id or any extra keys."
+    )
+    system_prompt_2 = (
+        "Provide one or more distinct choices ordered from most to least likely, with no more than 5 total. "
+        "Let the prompt determine how many options are needed (no fixed minimum). "
+        "Use each desc to compare this choice against the other choices (formality, register, nuance, region, etc.). "
+        "Keep def brief and use desc for usage notes or clarifications. "
+        "Set positive=true for correct examples; only include a negative example if it helps clarify usage."
+    )
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "system", "content": system_prompt_2},
+        {"role": "user", "content": "Lookup prompt JSON:\n" + json.dumps(prompt_payload, ensure_ascii=True, indent=2)},
+    ]
+
+    ai_model = os.getenv("OPENAI_MODEL", "gpt-5-mini")
+    try:
+        lookup_result = call_chatgpt(ai_model, messages, json_model=LookupResultWord)
+    except Exception:
+        current_app.logger.exception("Lookup AI call failed")
+        return jsonify({"message": "Lookup failed"}), 502
+
+    if hasattr(lookup_result, "model_dump"):
+        result_payload = lookup_result.model_dump(by_alias=True, mode="json")
+    else:
+        result_payload = lookup_result
+
+    return jsonify(result_payload)
 
 # add a word
 @bp.route("/", methods=["PUT"])
@@ -108,4 +174,3 @@ def delete_word(id_str):
     })
 
     return jsonify({"message": "success"})
-
