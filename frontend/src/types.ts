@@ -14,11 +14,8 @@ export type wordType = {
     pos: "n" | "p" | "v" | "adj" | "adv" | "c" | "i" | "q",
     gender: "m" | "f" | "n" | null,
     trans: string | null,
-    desc: Array<string>,
-    ex: Array<{
-        en: string,
-        targ: string
-    }>
+    desc: string,
+    ex: Array<exSentenceType>
 }
 
 // Since rules and norms store the exact same fields, they'll be represented by the same type
@@ -28,9 +25,11 @@ export type ruleNormType = {
     lang: string,
     def: string,
     notes: Array<string>,
-    ex: Array<{
-        en: string,
-        targ: string,
-        positive: boolean
-    }>
+    ex: Array<exSentenceType>
+}
+
+export type exSentenceType = {
+    en: string,
+    targ: string,
+    positive: boolean
 }
