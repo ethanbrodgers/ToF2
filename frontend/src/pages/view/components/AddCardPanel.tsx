@@ -62,6 +62,8 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // state var: word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
+    // special instructions for AI
+    const [instructions, setInstructions] = React.useState("");
     // state var: addData, adds word/rule/norm to backend
     const mutateResults = {
         words: useAddWord(),
@@ -256,7 +258,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     {/* word/rule/norm fields */}
                     {/* word fields (make sure data is actually a word by checking en field)*/}
                     {(mode === "words" && "en" in toAdd) ? <div>
-                        <AddCardInput display="Special instructions" />
+                        <AddCardInput display="Special instructions" value={instructions} setValue={setInstructions} />
                         <div className="flex justify-between">
                             <AddCardInput field="en" display="English" value={toAdd.en} setToAddField={setToAddField} />
                             <AddCardInput field="targ" display="Target" value={toAdd.targ} setToAddField={setToAddField} />
@@ -339,7 +341,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                         attemptAddData()
                     } else {
                         // lookup
-                        lookupWord({desc: "", word: toAdd});
+                        lookupWord({desc: instructions, word: toAdd});
                         console.log("called lookupWord...")
                     }
                 }}
