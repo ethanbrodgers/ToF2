@@ -209,7 +209,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         }}>
             <div className="flex h-full items-stretch">
                 {/* enter-fields panel */}
-                <div className="flex-1 relative p-4 pt-0 min-h-0 overflow-y-auto">
+                <div className="flex-1 relative p-4 pt-0 min-h-0 overflow-y-auto border-r-2 border-gray-500">
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
                         <p className="text-5xl">Add a</p>
@@ -283,10 +283,10 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 </div>
 
                 {/* see-completions panel */}
-                <div className="flex-1 p-4">
+                <div className="flex-1 p-4 min-h-0 overflow-y-scroll border-l border-gray-500">
                     {(lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
                         <p>{opt.desc}</p>
-                        <div className="shrink-0">
+                        <div className="shrink-0" onClick={() => {setToAdd(opt.word)}}>
                             <Word word={opt.word}></Word>
                         </div>
                         {console.log(lookupWordResult)}
