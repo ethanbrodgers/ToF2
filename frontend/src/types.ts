@@ -6,7 +6,7 @@ Feel free to add any types that will be used in more than one file. Changing a p
 */
 
 export type wordType = {
-    _id: string,
+    _id?: string,
     lang: string,
     en: string,
     targ: string,
@@ -20,7 +20,7 @@ export type wordType = {
 
 // Since rules and norms store the exact same fields, they'll be represented by the same type
 export type ruleNormType = {
-    _id: string,
+    _id?: string,
     title: string,
     lang: string,
     def: string,
