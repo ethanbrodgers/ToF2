@@ -16,7 +16,7 @@ const DEFAULTS = {
         en: "",
         targ: "",
         def: "",
-        pos: "n",
+        pos: "",
         gender: "",
         trans: "",
         desc: "",
@@ -235,7 +235,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
             height: (expanded) ? "400px" : "0"
         }}>
             <div className="flex h-full items-stretch">
-                {/* enter-fields panel */}
+                {/* enter-fields panel (left) */}
                 <div className="flex-1 relative p-4 pt-0 min-h-0 overflow-y-auto border-r-2 border-gray-500">
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
@@ -267,6 +267,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                         </div>
                         <div className="flex justify-between">
                             <AddCardSelect field="pos" display="Part of speech" value={toAdd.pos} setToAddField={setToAddField} options={{
+                                "Don't specify": "",
                                 "Noun": "n",
                                 "Pronoun": "p",
                                 "Verb": "v",
@@ -277,6 +278,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                                 "Quantifier": "q"
                             }} />
                             <AddCardSelect field="gender" display="Gender" value={toAdd.gender} setToAddField={setToAddField} options={{
+                                "Don't specify": "",
                                 "None": null,
                                 "Masculine": "m",
                                 "Feminine": "f",
@@ -309,7 +311,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     </div>
                 </div>
 
-                {/* see-completions panel */}
+                {/* see-completions panel (right) */}
                 <div className="flex-1 p-4 min-h-0 overflow-y-scroll border-l border-gray-500">
                     {(lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
                         <p>{opt.desc}</p>
