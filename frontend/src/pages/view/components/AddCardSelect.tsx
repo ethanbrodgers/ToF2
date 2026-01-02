@@ -8,7 +8,9 @@ import React from 'react';
  * ex. "targ". Pass in if this will edit a word field.
  * @param {boolean} [props.header] - whether or not the field text will be header-sized.
  * Defaults to false.
- * @param {string} [props.display] - the user-friendly name for this input, ex. "Target"
+ * @param {string} [props.display] - the user-friendly name for this select, ex. "Target"
+ * @param {string | null} [props.value] - the value this select should take. Tie this to a
+ * state variable to programatically change the value of this select.
  * @param {Function} [props.setToAddField] - the state-mutator function that changes a field
  * of the current word/rule/norm to add. Usage example: setToAddField({targ: "perro"}); Pass
  * in if props.field is also passed in.
@@ -21,7 +23,7 @@ import React from 'react';
  * @param {Function} [props.setStateVar] - The setter function for stateVar. Will be used to link
  * this select's value to the value of the state variable.
  */
-export default function AddCardSelect({field, header=false, display, setToAddField, options, stateVar, setStateVar}: {field?: string, header?: boolean, display?: string, setToAddField?: Function, options: Object, stateVar?: string, setStateVar?: Function}) {
+export default function AddCardSelect({field, header=false, display, value, setToAddField, options, stateVar, setStateVar}: {field?: string, header?: boolean, display?: string, value?: string | null, setToAddField?: Function, options: Object, stateVar?: string, setStateVar?: Function}) {
     return ( <div>
         {display && <p className="inline mr-2">{display}:</p>}
         <select
@@ -30,7 +32,7 @@ export default function AddCardSelect({field, header=false, display, setToAddFie
                 if (field) setToAddField({[field]: event.target.value});
                 if (stateVar) setStateVar(event.target.value);
             }}
-            value={stateVar}
+            value={value || stateVar}
         >
             {Object.entries(options).map(([display, val], i) => 
                 <option value={val} key={i}>{display}</option>)}
