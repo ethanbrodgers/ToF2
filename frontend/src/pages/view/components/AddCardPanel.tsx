@@ -1,10 +1,12 @@
 import React from 'react';
-import { useAddWord, useAddRule, useAddNorm } from '@/services/useQueries';
+import { wordType } from '@/types';
+import { useAddWord, useLookupWord, useAddRule, useAddNorm } from '@/services/useQueries';
 import AddCardInput from './AddCardInput';
 import AddCardSelect from './AddCardSelect';
 import AddCardNotice from './AddCardNotice';
 import AddCardExList from './AddCardExList';
 import AddCardNotesList from './AddCardNotesList';
+import Word from './Word';
 
 
 // default values for each mode
@@ -67,6 +69,43 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         norms: useAddNorm()
     }
     const { mutate: addData } = mutateResults[mode];
+    // state var: lookup word
+    const { mutate: lookupWord, data: lookupWordResult } = useLookupWord();
+    const defaultLookupWordResult: Array<{desc: string, word: wordType}> = [
+        {
+            desc: "Lawyer — the professional/legal sense; formal and used in legal contexts. Feminine form avocate; distinguishes from the fruit sense by context and by feminine form for people.",
+            word: {
+                def: "A legal professional who represents or advises clients in legal matters and in court.",
+                desc: "Refers to the profession. Feminine form avocate is commonly used for women. Can appear with titles (un avocat, l'avocat de la défense).",
+                en: "lawyer",
+                ex: [
+                    {en: 'He is a lawyer.', positive: true, targ: 'Il est avocat.'},
+                    {en: 'She works as a lawyer at a large firm.', positive: true, targ: 'Elle travaille comme avocate dans un grand cabinet.'}
+                ],
+                gender: "m",
+                lang: "fr",
+                pos: "n",
+                targ: "avocat",
+                trans: null
+            }
+        },
+        {
+            desc: "Avocado — the fruit sense; culinary contexts. Same spelling but different meaning; always masculine and distinguished from the profession by context.",
+            word: {
+                def: "A green, creamy fruit commonly used in salads, spreads, and cooking.",
+                desc: "Used for the fruit in culinary contexts. Never takes the feminine occupational form (avocate). Plural (les avocats) may be ambiguous without context.",
+                en: "avocado",
+                ex: [
+                    {en: 'The avocado soup is ready.', positive: true, targ: 'La soupe d\'avocat est prète.'}
+                ],
+                gender: "m",
+                lang: "fr",
+                pos: "n",
+                targ: "avocat",
+                trans: null
+            }
+        }
+    ]
     // state var: notice to display
     const [notice, setNotice]: [{
         type: "loading" | "error" | "success", text: string, key?: any
@@ -85,13 +124,13 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         setNotice({type, text, key: Date.now()});
     }
 
-    // executes plus button functionality (expand and add data)
+    // executes plus button functionality (expand, add data, or lookup word)
     function plusButtonFunc() {
         // if collapsed: expand
         if (!expanded) {
             setExpanded(true);
-        } else {
-            // else, attempt to add
+        } else if (false) {
+            // else if word is complete, attempt to add
             if (mode === "words") {
                 if (toAdd.en && toAdd.targ) {
                     addData(toAdd, {
@@ -149,6 +188,9 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     makeNotice("error", "Norm must have title");
                 }
             }
+        } else {
+            lookupWord({desc: "", word: toAdd});
+            console.log("called lookupWord...")
         }
     }
 
@@ -242,7 +284,13 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
                 {/* see-completions panel */}
                 <div className="flex-1 p-4">
-                    <p>[See completions goes here]</p>
+                    {(lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
+                        <p>{opt.desc}</p>
+                        <div className="shrink-0">
+                            <Word word={opt.word}></Word>
+                        </div>
+                        {console.log(lookupWordResult)}
+                    </div>)}
                 </div>
             </div>
 
