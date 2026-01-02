@@ -13,26 +13,26 @@ import Word from './Word';
 const DEFAULTS = {
     words: {
         lang: "es",
-        en: null,
-        targ: null,
-        def: "[None provided]",
+        en: "",
+        targ: "",
+        def: "",
         pos: "n",
-        gender: null,
-        trans: null,
-        desc: "[None provided]",
+        gender: "",
+        trans: "",
+        desc: "",
         ex: []
     },
     rules: {
         lang: "es",
-        title: null,
-        def: "[None provided]",
+        title: "",
+        def: "",
         notes: [],
         ex: []
     },
     norms: {
         lang: "es",
-        title: null,
-        def: "[None provided]",
+        title: "",
+        def: "",
         notes: [],
         ex: []
     }
@@ -62,22 +62,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // state var: word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
-    // toAdd status: "incomplete" means cannot be added, "partial" means missing non-critical fields, "complete" means missing no fields (except those that might actually be null)
-    const missing = (val: any) => val === null || (typeof val === "string" && val.length === 0) || (Array.isArray(val) && val.length === 0);
-    const toAddStatus = (
-        (mode === "words")
-            ? (
-                (missing(toAdd.lang) || missing(toAdd.en) || missing(toAdd.targ))
-                    ? "incomplete"
-                    : (
-                        (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.ex))
-                            ? "partial"
-                            : "complete" 
-                    )
-            )
-            : "complete"
-    );
-    console.log("toAddStatus: " + toAddStatus);
     // state var: addData, adds word/rule/norm to backend
     const mutateResults = {
         words: useAddWord(),
@@ -135,78 +119,86 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
     // ==== helper functions ====
 
+    // pass in the property of some object (ex. missing(toAdd.en)) to see if it is missing.
+    // Counts as missing if undefined/null, empty string, array with no entries or a missing entry,
+    // or object with no entries or a missing entry. Recursive.    
+    function missing(val: any): boolean {
+        if (val === null || val === undefined || val === "") return true;
+        if (typeof val === "string" && val.length === 0) return true;
+        if (Array.isArray(val)) {
+            if (val.length === 0) return true;
+            for (const elem of val) if (missing(elem)) return true;
+        }
+        if (typeof val === "object") {
+            if (Object.entries(val).length === 0) return true;
+            for (const [key, subval] of Object.entries(val)) if (missing(subval)) return true;
+        }
+        return false;
+    }
+
     // makes and displays a new notice
     function makeNotice(type: "loading" | "error" | "success", text: string) {
         setNotice({type, text, key: Date.now()});
     }
 
-    // executes plus button functionality (expand, add data, or lookup word)
-    function plusButtonFunc() {
-        // if collapsed: expand
-        if (!expanded) {
-            setExpanded(true);
-        } else if (toAddStatus !== "incomplete") {
-            // else if word is complete, attempt to add
-            if (mode === "words") {
-                if (toAdd.en && toAdd.targ) {
-                    addData(toAdd, {
-                        // function to run when added successfully
-                        onSuccess: () => {
-                            makeNotice("success", "Word added")
-                        },
-                        // function to run when error
-                        onError: (error) => {
-                            makeNotice("error", `Error adding word: ${error.message}`);
-                        }
-                    });
-                    makeNotice("loading", "Loading...")
-                }
-                else {
-                    console.error("Tried to add invalid word");
-                    makeNotice("error", "Word must have English and Target");
-                }
+    // attempts to add the current word/rule/norm and displays corresponding notices
+    function attemptAddData() {
+        if (mode === "words") {
+            if (!missing(toAdd.en) && !missing(toAdd.targ)) {
+                addData(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        makeNotice("success", "Word added")
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        makeNotice("error", `Error adding word: ${error.message}`);
+                    }
+                });
+                makeNotice("loading", "Loading...")
             }
-            else if (mode === "rules") {
-                if (toAdd.title) {
-                    addData(toAdd, {
-                        // function to run when added successfully
-                        onSuccess: () => {
-                            makeNotice("success", "Rule added")
-                        },
-                        // function to run when error
-                        onError: (error) => {
-                            makeNotice("error", `Error adding rule: ${error.message}`);
-                        }
-                    });
-                    makeNotice("loading", "Loading...")
-                }
-                else {
-                    console.error("Tried to add invalid rule");
-                    makeNotice("error", "Rule must have title");
-                }
+            else {
+                console.error("Tried to add invalid word");
+                makeNotice("error", "Word must have English and Target");
             }
-            else if (mode === "norms") {
-                if (toAdd.title) {
-                    addData(toAdd, {
-                        // function to run when added successfully
-                        onSuccess: () => {
-                            makeNotice("success", "Norm added")
-                        },
-                        // function to run when error
-                        onError: (error) => {
-                            makeNotice("error", `Error adding norm: ${error.message}`);
-                        }
-                    });
-                    makeNotice("loading", "Loading...")
-                }
-                else {
-                    console.error("Tried to add invalid norm");
-                    makeNotice("error", "Norm must have title");
-                }
+        }
+        else if (mode === "rules") {
+            if (!missing(toAdd.title)) {
+                addData(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        makeNotice("success", "Rule added")
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        makeNotice("error", `Error adding rule: ${error.message}`);
+                    }
+                });
+                makeNotice("loading", "Loading...")
             }
-        } else {
-            lookupWord({desc: "", word: toAdd});
-            console.log("called lookupWord...")
+            else {
+                console.error("Tried to add invalid rule");
+                makeNotice("error", "Rule must have title");
+            }
+        }
+        else if (mode === "norms") {
+            if (!missing(toAdd.title)) {
+                addData(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        makeNotice("success", "Norm added")
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        makeNotice("error", `Error adding norm: ${error.message}`);
+                    }
+                });
+                makeNotice("loading", "Loading...")
+            }
+            else {
+                console.error("Tried to add invalid norm");
+                makeNotice("error", "Norm must have title");
+            }
         }
     }
 
@@ -214,6 +206,25 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     function setToAddField(obj) {
         setToAdd({...toAdd, ...obj});
     }
+
+
+    // ==== Helpful values ====
+
+    // toAdd status: "incomplete" means cannot be added, "partial" means missing non-critical fields, "complete" means missing no fields (except those that might actually be null)
+    const toAddStatus = (
+        (mode === "words")
+            ? (
+                (missing(toAdd.lang) || missing(toAdd.en) || missing(toAdd.targ))
+                    ? "incomplete"
+                    : (
+                        (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.ex))
+                            ? "partial"
+                            : "complete" 
+                    )
+            )
+            : "complete"
+    );
+    console.log("toAddStatus: " + toAddStatus);
 
 
     // ==== JSX ====
@@ -247,12 +258,12 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     {(mode === "words" && "en" in toAdd) ? <div>
                         <AddCardInput display="Special instructions" />
                         <div className="flex justify-between">
-                            <AddCardInput field="en" display="English" value={toAdd.en} setToAddField={setToAddField} defaultVal={null} />
-                            <AddCardInput field="targ" display="Target" value={toAdd.targ} setToAddField={setToAddField} defaultVal={null} />
+                            <AddCardInput field="en" display="English" value={toAdd.en} setToAddField={setToAddField} />
+                            <AddCardInput field="targ" display="Target" value={toAdd.targ} setToAddField={setToAddField} />
                         </div>
                         <div className="flex justify-between">
-                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} defaultVal="[None provided]" />
-                            <AddCardInput field="desc" display="Description" value={toAdd.desc} setToAddField={setToAddField} defaultVal="[None provided]" />
+                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                            <AddCardInput field="desc" display="Description" value={toAdd.desc} setToAddField={setToAddField} />
                         </div>
                         <div className="flex justify-between">
                             <AddCardSelect field="pos" display="Part of speech" value={toAdd.pos} setToAddField={setToAddField} options={{
@@ -271,21 +282,21 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                                 "Feminine": "f",
                                 "Neuter": "n"
                             }} />
-                            <AddCardInput field="trans" display="Transliteration" value={toAdd.trans} setToAddField={setToAddField} defaultVal={null} />
+                            <AddCardInput field="trans" display="Transliteration" value={toAdd.trans} setToAddField={setToAddField} />
                         </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     // rule fields (make sure data is actually a rule by checking title field)
                     : (mode === "rules" && "title" in toAdd) ? <div>
-                        <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} defaultVal={null} />
-                        <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
+                        <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     // norm fields (make sure data is actually a norm by checking title field)
                     : (mode === "norms" && "title" in toAdd) ? <div>
-                        <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} defaultVal={null} />
-                        <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} defaultVal="[None provided]" />
+                        <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
+                        <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
@@ -312,16 +323,39 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         </div>
 
 
-        {/* big plus button (and x button) */}
+        {/* bottom buttons */}
         <div className="relative">
+            {/* big plus/lookup button */}
             <button
-                className="w-full p-6 bg-green-400 block text-3xl cursor-pointer"
-                onClick={plusButtonFunc}
+                className={`w-full p-6 block text-3xl cursor-pointer ${(!expanded || toAddStatus === "complete") ? "bg-green-400" : "bg-blue-400"}`}
+                onClick={() => {
+                    // if collapsed: expand
+                    if (!expanded) {
+                        setExpanded(true);
+                    } else if (toAddStatus === "complete") {
+                        // if word is complete, attempt to add
+                        attemptAddData()
+                    } else {
+                        // lookup
+                        lookupWord({desc: "", word: toAdd});
+                        console.log("called lookupWord...")
+                    }
+                }}
             >{(!expanded || toAddStatus === "complete") ? "+" : "Lookup"}</button>
-            { expanded && <button
-                className="absolute left-0 top-0 w-[84px] h-[84px] text-3xl p-6 bg-red-400 cursor-pointer"
-                onClick={() => {setExpanded(false)}}
-            >X</button> }
+
+            {/* little buttons */}
+            {expanded && <div className="absolute left-0 top-0">
+                {/* X button */}
+                <button
+                    className="w-[84px] h-[84px] text-3xl p-6 bg-red-400 cursor-pointer"
+                    onClick={() => {setExpanded(false)}}
+                >X</button>
+                {/* little + button: to add a partial word/rule/norm with some nonessential fields missing */}
+                {toAddStatus === "partial" && <button
+                    className="w-[84px] h-[84px] text-3xl p-6 bg-green-400 cursor-pointer"
+                    onClick={attemptAddData}
+                >+</button> }
+            </div>}
         </div>
         
         

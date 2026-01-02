@@ -18,7 +18,7 @@ import React from 'react';
 export default function AddCardInput({field, display, value, setToAddField, defaultVal=""}: {field?: string, display: string, value?: string | null, setToAddField?: Function, defaultVal?: any}) {
     return ( <div>
         <p className="inline mr-2">{display}:</p>
-        <input className="inline border-b" type="text" value={value} onChange={(event) => {
+        <input className="inline border-b" type="text" value={(value === null) ? "" : value} onChange={(event) => {
             if (field) setToAddField({
                 [field]: (event.target.value.length > 0) ? event.target.value : defaultVal
             });
