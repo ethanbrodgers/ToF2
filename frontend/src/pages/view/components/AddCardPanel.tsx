@@ -230,7 +230,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                             : "complete" 
                     )
             )
-            : "complete"
+            : "complete" // CHANGE THIS WHEN IMPLEMENTING RULE/NORM LOOKUP
     );
     console.log("toAddStatus: " + toAddStatus);
 
@@ -298,15 +298,19 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     </div>
                     // rule fields (make sure data is actually a rule by checking title field)
                     : (mode === "rules" && "title" in toAdd) ? <div>
-                        <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
-                        <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                        <div className="flex justify-between">
+                            <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
+                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                        </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     // norm fields (make sure data is actually a norm by checking title field)
                     : (mode === "norms" && "title" in toAdd) ? <div>
-                        <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
-                        <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                        <div className="flex justify-between">
+                            <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
+                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                        </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
@@ -314,7 +318,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     
                     
                     {/* notice display */}
-                    <div className="absolute bottom-0 left-0 h-8">
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-8">
                         {notice && <AddCardNotice type={notice.type} key={notice.key}>{notice.text}</AddCardNotice>}
                     </div>
                 </div>
@@ -386,8 +390,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 >+</button> }
             </div>}
         </div>
-        
-        
     </div> );
 }
 

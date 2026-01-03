@@ -14,7 +14,9 @@ import { wordType, ruleNormType} from '@/types';
 export default function AddCardExList({toAdd, setToAdd}: {toAdd: wordType | ruleNormType, setToAdd: Function}) {
     return ( <div>
         <p>Example sentences:</p>
-        {toAdd.ex.map((sentence, i) => <AddCardEx toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}
+        <div className="h-24 min-h-0 overflow-y-auto border-l-2 border-gray-500">
+            {toAdd.ex.map((sentence, i) => <AddCardEx toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}
+        </div>
         <button
             className="bg-blue-400 w-6 h-6 cursor-pointer"
             onClick={() => {
