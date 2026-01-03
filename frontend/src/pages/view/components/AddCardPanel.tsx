@@ -335,24 +335,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
         {/* bottom buttons */}
         <div className="relative">
-            {/* big plus/lookup button
-            <button
-                className={`w-full p-6 block text-3xl cursor-pointer ${(!expanded || toAddStatus === "complete") ? "bg-green-400" : "bg-blue-400"}`}
-                onClick={() => {
-                    // if collapsed: expand
-                    if (!expanded) {
-                        setExpanded(true);
-                    } else if (toAddStatus === "complete") {
-                        // if word is complete, attempt to add
-                        attemptAddData()
-                    } else {
-                        // lookup
-                        lookupWord({desc: instructions, word: toAdd});
-                        console.log("called lookupWord...")
-                    }
-                }}
-            >{(!expanded || toAddStatus === "complete") ? "+" : "Lookup"}</button> */}
-
             {/* big green button (expand or add word) */}
             {(!expanded || (toAddStatus === "complete")) &&
                 <button
@@ -364,12 +346,22 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 >+</button>
             }
             {/* big blue button (lookup) */}
-            {(expanded && (toAddStatus === "incomplete" || toAddStatus === "partial" || instructions !== "")) &&
+            {(expanded && (toAddStatus === "incomplete" || toAddStatus === "partial" || (toAddStatus === "empty" && instructions !== ""))) &&
                 <button
                     className="w-full p-6 block text-3xl cursor-pointer bg-blue-400"
                     onClick={() => {
-                        lookupWord({desc: instructions, word: toAdd});
+                        lookupWord({desc: instructions, word: toAdd}, {
+                            // function to run when added successfully
+                            onSuccess: () => {
+                                makeNotice("success", "Lookup complete")
+                            },
+                            // function to run when error
+                            onError: (error) => {
+                                makeNotice("error", `Error looking up word: ${error.message}`);
+                            }
+                        });
                         console.log("called lookupWord...")
+                        makeNotice("loading", "Loading (typical time: 30sec)");
                     }}
                 >Lookup</button>
             }
