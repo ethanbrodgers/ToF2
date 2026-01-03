@@ -12,25 +12,22 @@ import Word from './Word';
 // default values for each mode
 const DEFAULTS = {
     words: {
-        lang: "es",
         en: "",
         targ: "",
         def: "",
         pos: "",
         gender: "",
-        trans: "",
+        trans: null,
         desc: "",
         ex: []
     },
     rules: {
-        lang: "es",
         title: "",
         def: "",
         notes: [],
         ex: []
     },
     norms: {
-        lang: "es",
         title: "",
         def: "",
         notes: [],
@@ -62,6 +59,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // state var: word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
+    console.log("toAdd", toAdd)
     // special instructions for AI
     const [instructions, setInstructions] = React.useState("");
     // state var: addData, adds word/rule/norm to backend
@@ -122,10 +120,11 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // ==== helper functions ====
 
     // pass in the property of some object (ex. missing(toAdd.en)) to see if it is missing.
-    // Counts as missing if undefined/null, empty string, array with no entries or a missing entry,
-    // or object with no entries or a missing entry. Recursive.    
+    // Counts as missing if undefined, empty string, array with no entries or a missing entry,
+    // or object with no entries or a missing entry. Recursive. Null does not count as missing.   
     function missing(val: any): boolean {
-        if (val === null || val === undefined || val === "") return true;
+        if (val === null) return false;
+        if (val === undefined || val === "") return true;
         if (typeof val === "string" && val.length === 0) return true;
         if (Array.isArray(val)) {
             if (val.length === 0) return true;
@@ -212,14 +211,21 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
     // ==== Helpful values ====
 
-    // toAdd status: "incomplete" means cannot be added, "partial" means missing non-critical fields, "complete" means missing no fields (except those that might actually be null)
+    // toAdd status: "empty" means not enough information to add or look up, "incomplete" means cannot be added but can be looked up, "partial" means can be added or looked up but missing non-critical fields, "complete" means missing no fields.
     const toAddStatus = (
         (mode === "words")
             ? (
+                // if missing a key field
                 (missing(toAdd.lang) || missing(toAdd.en) || missing(toAdd.targ))
-                    ? "incomplete"
+                    ? (
+                        // if missing all lookupable fields (ignore instructions state var for now)
+                        (missing(toAdd.en) && missing(toAdd.targ) && missing(toAdd.def) && missing(toAdd.desc) && toAdd.trans == null)
+                            ? "empty"
+                            : "incomplete"
+                    )
                     : (
-                        (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.ex))
+                        // if missing a non-key field
+                        (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.gender) || missing(toAdd.ex))
                             ? "partial"
                             : "complete" 
                     )
@@ -286,7 +292,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                                 "Feminine": "f",
                                 "Neuter": "n"
                             }} />
-                            <AddCardInput field="trans" display="Transliteration" value={toAdd.trans} setToAddField={setToAddField} />
+                            <AddCardInput field="trans" display="Transliteration" value={toAdd.trans} setToAddField={setToAddField} defaultVal={null} />
                         </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
@@ -329,7 +335,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
         {/* bottom buttons */}
         <div className="relative">
-            {/* big plus/lookup button */}
+            {/* big plus/lookup button
             <button
                 className={`w-full p-6 block text-3xl cursor-pointer ${(!expanded || toAddStatus === "complete") ? "bg-green-400" : "bg-blue-400"}`}
                 onClick={() => {
@@ -345,7 +351,34 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                         console.log("called lookupWord...")
                     }
                 }}
-            >{(!expanded || toAddStatus === "complete") ? "+" : "Lookup"}</button>
+            >{(!expanded || toAddStatus === "complete") ? "+" : "Lookup"}</button> */}
+
+            {/* big green button (expand or add word) */}
+            {(!expanded || (toAddStatus === "complete")) &&
+                <button
+                    className="w-full p-6 block text-3xl cursor-pointer bg-green-400"
+                    onClick={() => {
+                        if (expanded) attemptAddData();
+                        else setExpanded(true);
+                    }}
+                >+</button>
+            }
+            {/* big blue button (lookup) */}
+            {(expanded && (toAddStatus === "incomplete" || toAddStatus === "partial" || instructions !== "")) &&
+                <button
+                    className="w-full p-6 block text-3xl cursor-pointer bg-blue-400"
+                    onClick={() => {
+                        lookupWord({desc: instructions, word: toAdd});
+                        console.log("called lookupWord...")
+                    }}
+                >Lookup</button>
+            }
+            {/* big gray button (no action available) */}
+            {(expanded && (toAddStatus === "empty" && instructions === "")) &&
+                <button
+                    className="w-full p-6 block text-3xl bg-gray-500"
+                >Add data to look up</button>
+            }
 
             {/* little buttons */}
             {expanded && <div className="absolute left-0 top-0">
