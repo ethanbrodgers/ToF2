@@ -237,7 +237,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
     // ==== JSX ====
 
-    return ( <div className="w-full">
+    return ( <div className="w-full relative">
         {/* expandable */}
         <div className="bg-gray-200 overflow-hidden transition-all border-3 border-gray-500 border-t-0" style={{
             height: (expanded) ? "400px" : "0"
@@ -245,6 +245,17 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
             <div className="flex h-full items-stretch">
                 {/* enter-fields panel (left) */}
                 <div className="flex-1 relative p-4 pt-0 min-h-0 overflow-y-auto border-r-2 border-gray-500">
+                    {/* clear button */}
+                    {!(JSON.stringify(toAdd) === JSON.stringify(DEFAULTS[mode]) && instructions === "") &&
+                        <button
+                            className="absolute right-4 top-4 bg-red-500 w-6 h-6 cursor-pointer"
+                            onClick={() => {
+                                setInstructions("");
+                                setToAdd(DEFAULTS[mode]);
+                            }}
+                        >X</button>
+                    }
+
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
                         <p className="text-5xl">Add a</p>
