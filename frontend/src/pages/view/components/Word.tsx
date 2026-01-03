@@ -9,8 +9,10 @@ import ExSentence from './ExSentence';
  * @param {Object} props - component props
  * 
  * @param {wordType} props.word - the word to be displayed, following the word schema
+ * @param {boolean} [props.expanded] - whether or not this Word should be expanded. Usually
+ * tied to a state variable.
  */
-export default function Word({word}: {word: wordType, key?: any}) {
+export default function Word({word, expanded}: {word: wordType, expanded?: boolean, key?: any}) {
     // ==== create pieces ====
 
     // tags
@@ -44,7 +46,7 @@ export default function Word({word}: {word: wordType, key?: any}) {
 
 
     // ==== jsx ====
-    return ( <Card tags={tags} details={details}>
+    return ( <Card tags={tags} details={details} expanded={expanded}>
         {enTargDisplay}
     </Card> );
 }
