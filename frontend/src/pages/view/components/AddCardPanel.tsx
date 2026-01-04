@@ -144,6 +144,28 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         setNotice({type, text, key: Date.now()});
     }
 
+    // looks up current data and displays appropriate notices
+    function lookupData() {
+        if (mode === "words") {
+            lookupWord({desc: instructions, word: toAdd}, {
+                // function to run when added successfully
+                onSuccess: () => {
+                    makeNotice("success", "Lookup complete")
+                },
+                // function to run when error
+                onError: (error) => {
+                    makeNotice("error", `Error looking up word: ${error.message}`);
+                }
+            });
+            console.log("called lookupWord...")
+            makeNotice("loading", "Loading (typical time: 30sec)");
+        }
+        else {
+            console.error(`Lookup not implemented for mode "${mode}"`);
+            makeNotice("error", `Lookup not implemented for mode "${mode}"`);
+        }
+    }
+
     // attempts to add the current word/rule/norm and displays corresponding notices
     function attemptAddData() {
         if (mode === "words") {
@@ -214,26 +236,28 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // ==== Helpful values ====
 
     // toAdd status: "empty" means not enough information to add or look up, "incomplete" means cannot be added but can be looked up, "partial" means can be added or looked up but missing non-critical fields, "complete" means missing no fields.
-    const toAddStatus = (
-        (mode === "words")
-            ? (
-                // if missing a key field
-                (missing(toAdd.lang) || missing(toAdd.en) || missing(toAdd.targ))
-                    ? (
-                        // if missing all lookupable fields (ignore instructions state var for now)
-                        (missing(toAdd.en) && missing(toAdd.targ) && missing(toAdd.def) && missing(toAdd.desc) && toAdd.trans == null)
-                            ? "empty"
-                            : "incomplete"
-                    )
-                    : (
-                        // if missing a non-key field
-                        (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.gender) || missing(toAdd.ex))
-                            ? "partial"
-                            : "complete" 
-                    )
-            )
-            : "complete" // CHANGE THIS WHEN IMPLEMENTING RULE/NORM LOOKUP
-    );
+    let toAddStatus = "";
+    if (mode === "words") {
+        if (missing(toAdd.lang) || missing(toAdd.en) || missing(toAdd.targ)) {
+            if ((missing(toAdd.en) && missing(toAdd.targ) && missing(toAdd.def) && missing(toAdd.desc) && toAdd.trans == null))
+                toAddStatus = "empty";
+            else
+                toAddStatus = "incomplete";
+        }
+        else {
+            if (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.gender) || missing(toAdd.ex))
+                toAddStatus = "partial";
+            else
+                toAddStatus = "complete";
+        }
+    }
+    else if (mode === "rules") {
+        toAddStatus = (missing(toAdd.title)) ? "empty" : "complete";
+    }
+    else if (mode === "norms") {
+        toAddStatus = (missing(toAdd.title)) ? "empty" : "complete";
+    }
+
     console.log("toAddStatus: " + toAddStatus);
 
 
@@ -369,20 +393,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
             {(expanded && (toAddStatus === "incomplete" || toAddStatus === "partial" || (toAddStatus === "empty" && instructions !== ""))) &&
                 <button
                     className="w-full p-6 block text-3xl cursor-pointer bg-blue-400"
-                    onClick={() => {
-                        lookupWord({desc: instructions, word: toAdd}, {
-                            // function to run when added successfully
-                            onSuccess: () => {
-                                makeNotice("success", "Lookup complete")
-                            },
-                            // function to run when error
-                            onError: (error) => {
-                                makeNotice("error", `Error looking up word: ${error.message}`);
-                            }
-                        });
-                        console.log("called lookupWord...")
-                        makeNotice("loading", "Loading (typical time: 30sec)");
-                    }}
+                    onClick={lookupData}
                 >Lookup</button>
             }
             {/* big gray button (no action available) */}
