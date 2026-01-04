@@ -1,5 +1,5 @@
 import React from 'react';
-import Word from './Word';
+import Word from '../../../../components/Word';
 
 /**
  * The right half of the add-card panel. Displays AI-generated completions

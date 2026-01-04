@@ -1,9 +1,9 @@
 import React from 'react';
 import { wordType } from '@/types';
 import { useAddWord, useLookupWord, useAddRule, useAddNorm } from '@/services/useQueries';
-import AddCardFieldsPanel from './AddCardFieldsPanel';
-import AddCardCompletionsPanel from './AddCardCompletionsPanel';
-import AddCardButtonsBar from './AddCardButtonsBar';
+import AddCardFieldsPanel from './AddCardPanel-components/AddCardFieldsPanel';
+import AddCardCompletionsPanel from './AddCardPanel-components/AddCardCompletionsPanel';
+import AddCardButtonsBar from './AddCardPanel-components/AddCardButtonsBar';
 
 
 // default values for each mode

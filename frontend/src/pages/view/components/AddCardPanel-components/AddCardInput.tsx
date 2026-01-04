@@ -16,7 +16,7 @@ export default function AddCardInput({display, value, setValue, blankValue}: {di
     return ( <div>
         <p className="inline mr-2">{display}:</p>
         <input className="inline border-b" type="text" value={(value === null) ? "" : value} onChange={(event) => {
-            if (setValue) setValue((event.target.value === 0) ? blankValue : event.target.value);
+            if (setValue) setValue((event.target.value === "") ? blankValue : event.target.value);
         }} />
     </div> );
 }

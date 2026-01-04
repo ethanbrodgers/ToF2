@@ -1,5 +1,5 @@
 import React from 'react';
-import Option from './Option';
+import Option from './OptionsBar-components/Option';
 
 /*
 The collapsable options menu

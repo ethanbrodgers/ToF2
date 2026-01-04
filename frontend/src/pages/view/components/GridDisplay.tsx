@@ -1,7 +1,7 @@
 import React from 'react';
-import Word from './Word';
-import Rule from './Rule';
-import Norm from './Norm';
+import Word from '../../../components/Word';
+import Rule from '../../../components/Rule';
+import Norm from '../../../components/Norm';
 // "@" has been set up as an alias for frontend/src
 import { useWords, useRules, useNorms } from '@/services/useQueries';
 import { wordType } from '@/types';
