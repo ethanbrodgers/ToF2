@@ -364,11 +364,11 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 <div className="flex-1 p-4 min-h-0 overflow-y-scroll border-l border-gray-500">
                     {(lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
                         <p>{opt.desc}</p>
-                        <div className="shrink-0" onClick={() => {
-                            setToAdd(opt.word);
-                            setExpandedCompletion((i === expandedCompletion) ? null : i);
-                        }}>
-                            <Word word={opt.word} expanded={i === expandedCompletion}></Word>
+                        <div className="shrink-0">
+                            <Word word={opt.word} expanded={i === expandedCompletion} onClick={() => {
+                                setToAdd(opt.word);
+                                setExpandedCompletion((i === expandedCompletion) ? null : i);
+                            }} />
                         </div>
                     </div>)}
                 </div>

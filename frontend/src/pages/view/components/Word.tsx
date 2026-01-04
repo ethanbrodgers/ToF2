@@ -11,8 +11,10 @@ import ExSentence from './ExSentence';
  * @param {wordType} props.word - the word to be displayed, following the word schema
  * @param {boolean} [props.expanded] - whether or not this Word should be expanded. Usually
  * tied to a state variable.
+ * @param {Function} [props.onClick] - A function to call when the main body of this Card (not the expandable
+ * part) is clicked. 
  */
-export default function Word({word, expanded}: {word: wordType, expanded?: boolean, key?: any}) {
+export default function Word({word, expanded, onClick}: {word: wordType, expanded?: boolean, onClick?: Function, key?: any}) {
     // ==== create pieces ====
 
     // tags
@@ -46,7 +48,7 @@ export default function Word({word, expanded}: {word: wordType, expanded?: boole
 
 
     // ==== jsx ====
-    return ( <Card tags={tags} details={details} expanded={expanded}>
+    return ( <Card tags={tags} details={details} expanded={expanded} onClick={onClick}>
         {enTargDisplay}
     </Card> );
 }
