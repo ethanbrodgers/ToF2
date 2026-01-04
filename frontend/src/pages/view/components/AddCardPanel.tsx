@@ -72,7 +72,8 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     }
     const { mutate: addData } = mutateResults[mode];
     // state var: lookup word
-    const { mutate: lookupWord, data: lookupWordResult } = useLookupWord();
+    const { mutate: lookupWord, data: lookupWordResult, isPending: lookupWordPending, reset: clearLookupWord } = useLookupWord();
+    const lookupPending = (mode === "words" && lookupWordPending);
     const defaultLookupWordResult: Array<{desc: string, word: wordType}> = [
         {
             desc: "Lawyer — the professional/legal sense; formal and used in legal contexts. Feminine form avocate; distinguishes from the fruit sense by context and by feminine form for people.",
@@ -144,6 +145,18 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         setNotice({type, text, key: Date.now()});
     }
 
+    // clears all left-panel fields
+    function clearFields() {
+        setInstructions("");
+        setToAdd(DEFAULTS[mode]);
+    }
+
+    // clears all lookup completions, regardless of current mode
+    function clearLookup() {
+        clearLookupWord()
+        setExpandedCompletion(null);
+    }
+
     // looks up current data and displays appropriate notices
     function lookupData() {
         if (mode === "words") {
@@ -173,7 +186,9 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 addData(toAdd, {
                     // function to run when added successfully
                     onSuccess: () => {
-                        makeNotice("success", "Word added")
+                        makeNotice("success", "Word added");
+                        clearFields();
+                        clearLookup();
                     },
                     // function to run when error
                     onError: (error) => {
@@ -275,10 +290,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     {!(JSON.stringify(toAdd) === JSON.stringify(DEFAULTS[mode]) && instructions === "") &&
                         <button
                             className="absolute right-4 top-4 bg-red-500 w-6 h-6 cursor-pointer"
-                            onClick={() => {
-                                setInstructions("");
-                                setToAdd(DEFAULTS[mode]);
-                            }}
+                            onClick={clearFields}
                         >X</button>
                     }
 
@@ -362,15 +374,18 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
 
                 {/* see-completions panel (right) */}
                 <div className="flex-1 p-4 min-h-0 overflow-y-scroll border-l border-gray-500">
-                    {(lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
-                        <p>{opt.desc}</p>
-                        <div className="shrink-0">
-                            <Word word={opt.word} expanded={i === expandedCompletion} onClick={() => {
-                                setToAdd(opt.word);
-                                setExpandedCompletion((i === expandedCompletion) ? null : i);
-                            }} />
-                        </div>
-                    </div>)}
+                    {(lookupPending)
+                        ? <p>Looking up...</p>
+                        : (lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
+                            <p>{opt.desc}</p>
+                            <div className="shrink-0">
+                                <Word word={opt.word} expanded={i === expandedCompletion} onClick={() => {
+                                    setToAdd(opt.word);
+                                    setExpandedCompletion((i === expandedCompletion) ? null : i);
+                                }} />
+                            </div>
+                        </div>)
+                    }
                 </div>
             </div>
 
@@ -394,7 +409,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 <button
                     className="w-full p-6 block text-3xl cursor-pointer bg-blue-400"
                     onClick={lookupData}
-                >Lookup</button>
+                >{lookupPending ? "Lookup [in progress]" : "Lookup"}</button>
             }
             {/* big gray button (no action available) */}
             {(expanded && (toAddStatus === "empty" && instructions === "")) &&
@@ -408,7 +423,11 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 {/* X button */}
                 <button
                     className="w-[84px] h-[84px] text-3xl p-6 bg-red-400 cursor-pointer"
-                    onClick={() => {setExpanded(false)}}
+                    onClick={() => {
+                        setExpanded(false);
+                        clearFields();
+                        clearLookup();
+                    }}
                 >X</button>
                 {/* little + button: to add a partial word/rule/norm with some nonessential fields missing */}
                 {toAddStatus === "partial" && <button
