@@ -8,7 +8,6 @@ import Word from '../../../../components/Word';
  * @param {Object} props - component props
  * @param {boolean} props.lookupPending - whether a lookup is currently in progress
  * @param {Array<{desc: string, word: wordType}>} props.lookupWordResult - array of lookup results from AI
- * @param {Array<{desc: string, word: wordType}>} props.defaultLookupWordResult - default/example results
  * @param {number | null} props.expandedCompletion - index of the currently expanded completion, or null
  * @param {Function} props.setExpandedCompletion - setter for expandedCompletion
  * @param {Function} props.setToAdd - setter for toAdd, called when a completion is clicked
@@ -16,14 +15,12 @@ import Word from '../../../../components/Word';
 export default function AddCardCompletionsPanel({
     lookupPending,
     lookupWordResult,
-    defaultLookupWordResult,
     expandedCompletion,
     setExpandedCompletion,
     setToAdd
 }: {
     lookupPending: boolean,
     lookupWordResult: Array<{desc: string, word: any}> | undefined,
-    defaultLookupWordResult: Array<{desc: string, word: any}>,
     expandedCompletion: number | null,
     setExpandedCompletion: Function,
     setToAdd: Function
@@ -31,15 +28,18 @@ export default function AddCardCompletionsPanel({
     return ( <div className="flex-1 p-4 min-h-0 overflow-y-scroll border-l border-gray-500">
         {(lookupPending)
             ? <p>Looking up...</p>
-            : (lookupWordResult || defaultLookupWordResult).map((opt, i) => <div key={i} className="flex">
-                <p>{opt.desc}</p>
-                <div className="shrink-0">
-                    <Word word={opt.word} expanded={i === expandedCompletion} onClick={() => {
-                        setToAdd(opt.word);
-                        setExpandedCompletion((i === expandedCompletion) ? null : i);
-                    }} />
-                </div>
-            </div>)
+            : (lookupWordResult)
+                ? lookupWordResult.map((opt, i) => <div key={i} className="flex">
+                        <p>{opt.desc}</p>
+                        <div className="shrink-0">
+                            <Word word={opt.word} expanded={i === expandedCompletion} onClick={() => {
+                                setToAdd(opt.word);
+                                setExpandedCompletion((i === expandedCompletion) ? null : i);
+                            }} />
+                        </div>
+                    </div>)
+                : <p>Lookup results here</p>
+            
         }
     </div> );
 }

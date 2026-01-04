@@ -58,7 +58,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     // word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
-    console.log("toAdd", toAdd)
     // effect to switch toAdd value to match a change in mode
     React.useEffect(() => {
         setToAdd(DEFAULTS[mode])
@@ -123,7 +122,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     makeNotice("error", `Error looking up word: ${error.message}`);
                 }
             });
-            console.log("called lookupWord...")
             makeNotice("loading", "Loading (typical time: 30sec)");
         }
         else {
@@ -226,44 +224,8 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     else if (mode === "norms") {
         toAddStatus = (missing(toAdd.title)) ? "empty" : "complete";
     }
-    console.log("toAddStatus: " + toAddStatus);
 
     const lookupPending = (mode === "words" && lookupWordPending);
-    const defaultLookupWordResult: Array<{desc: string, word: wordType}> = [
-        {
-            desc: "Lawyer — the professional/legal sense; formal and used in legal contexts. Feminine form avocate; distinguishes from the fruit sense by context and by feminine form for people.",
-            word: {
-                def: "A legal professional who represents or advises clients in legal matters and in court.",
-                desc: "Refers to the profession. Feminine form avocate is commonly used for women. Can appear with titles (un avocat, l'avocat de la défense).",
-                en: "lawyer",
-                ex: [
-                    {en: 'He is a lawyer.', positive: true, targ: 'Il est avocat.'},
-                    {en: 'She works as a lawyer at a large firm.', positive: true, targ: 'Elle travaille comme avocate dans un grand cabinet.'}
-                ],
-                gender: "m",
-                lang: "fr",
-                pos: "n",
-                targ: "avocat",
-                trans: null
-            }
-        },
-        {
-            desc: "Avocado — the fruit sense; culinary contexts. Same spelling but different meaning; always masculine and distinguished from the profession by context.",
-            word: {
-                def: "A green, creamy fruit commonly used in salads, spreads, and cooking.",
-                desc: "Used for the fruit in culinary contexts. Never takes the feminine occupational form (avocate). Plural (les avocats) may be ambiguous without context.",
-                en: "avocado",
-                ex: [
-                    {en: 'The avocado soup is ready.', positive: true, targ: 'La soupe d\'avocat est prète.'}
-                ],
-                gender: "m",
-                lang: "fr",
-                pos: "n",
-                targ: "avocat",
-                trans: null
-            }
-        }
-    ]
 
 
     // ==== JSX ====
@@ -293,7 +255,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 <AddCardCompletionsPanel
                     lookupPending={lookupWordPending}
                     lookupWordResult={lookupWordResult}
-                    defaultLookupWordResult={defaultLookupWordResult}
                     expandedCompletion={expandedCompletion}
                     setExpandedCompletion={setExpandedCompletion}
                     setToAdd={setToAdd}

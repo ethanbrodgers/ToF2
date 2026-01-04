@@ -39,13 +39,13 @@ async function apiCall(
 
     // log errors
     if (!response.ok) {
-        console.log("Errored backend call");
-        console.log("endpoint:", endpoint);
-        console.log("httpMethod:", httpMethod);
-        console.log("body:", body);
-        console.log("queryParams:", queryParams);
-        console.log("pathVar:", pathVar);
-        console.log("response:", response);
+        console.error("Errored backend call");
+        console.error("endpoint:", endpoint);
+        console.error("httpMethod:", httpMethod);
+        console.error("body:", body);
+        console.error("queryParams:", queryParams);
+        console.error("pathVar:", pathVar);
+        console.error("response:", response);
     }
 
     // return
@@ -99,7 +99,6 @@ export async function lookupWord(desc: string, word: wordType): Promise<Array<{d
             && !(Array.isArray(val) && val.length === 0)
         ) incompleteWord[key] = val;
     }
-    console.log("incompleteWord: ", incompleteWord)
 
     return apiCall("/vocab/lookup", "POST", {desc, word: incompleteWord}, null, null)
     .then(response => response.json())
