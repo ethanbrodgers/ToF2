@@ -64,13 +64,10 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     console.log("toAdd", toAdd)
     // special instructions for AI
     const [instructions, setInstructions] = React.useState("");
-    // state var: addData, adds word/rule/norm to backend
-    const mutateResults = {
-        words: useAddWord(),
-        rules: useAddRule(),
-        norms: useAddNorm()
-    }
-    const { mutate: addData } = mutateResults[mode];
+    /// add-data mutators
+    const { mutate: addWord } = useAddWord();
+    const { mutate: addRule } = useAddRule();
+    const { mutate: addNorm } = useAddNorm();
     // state var: lookup word
     const { mutate: lookupWord, data: lookupWordResult, isPending: lookupWordPending, reset: clearLookupWord } = useLookupWord();
     const lookupPending = (mode === "words" && lookupWordPending);
@@ -180,10 +177,10 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
     }
 
     // attempts to add the current word/rule/norm and displays corresponding notices
-    function attemptAddData() {
+    function addData() {
         if (mode === "words") {
             if (!missing(toAdd.en) && !missing(toAdd.targ)) {
-                addData(toAdd, {
+                addWord(toAdd, {
                     // function to run when added successfully
                     onSuccess: () => {
                         makeNotice("success", "Word added");
@@ -204,7 +201,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         }
         else if (mode === "rules") {
             if (!missing(toAdd.title)) {
-                addData(toAdd, {
+                addRule(toAdd, {
                     // function to run when added successfully
                     onSuccess: () => {
                         makeNotice("success", "Rule added")
@@ -223,7 +220,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
         }
         else if (mode === "norms") {
             if (!missing(toAdd.title)) {
-                addData(toAdd, {
+                addNorm(toAdd, {
                     // function to run when added successfully
                     onSuccess: () => {
                         makeNotice("success", "Norm added")
@@ -241,12 +238,6 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
             }
         }
     }
-
-    // modifies a field of toAdd. Usage example: setToAddField({targ: "perro""});
-    function setToAddField(obj) {
-        setToAdd({...toAdd, ...obj});
-    }
-
 
     // ==== Helpful values ====
 
@@ -297,17 +288,17 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     {/* header */}
                     <div className="flex gap-2 items-baseline mx-auto w-fit">
                         <p className="text-5xl">Add a</p>
-                        <AddCardSelect header={true} options={{
+                        <AddCardSelect header={true} value={lang} setValue={setLang} options={{
                             "Spanish": "es",
                             "French": "fr",
                             "Chinese": "zh",
                             "Russian": "ru"
-                        }} stateVar={lang} setStateVar={setLang} />
-                        <AddCardSelect header={true} options={{
+                        }} />
+                        <AddCardSelect header={true} value={mode} setValue={setMode} options={{
                             "Word": "words",
                             "Rule": "rules",
                             "Norm": "norms"
-                        }} stateVar={mode} setStateVar={setMode} />
+                        }} />
                     </div>
 
                     {/* word/rule/norm fields */}
@@ -315,15 +306,25 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     {(mode === "words" && "en" in toAdd) ? <div>
                         <AddCardInput display="Special instructions" value={instructions} setValue={setInstructions} />
                         <div className="flex justify-between">
-                            <AddCardInput field="en" display="English" value={toAdd.en} setToAddField={setToAddField} />
-                            <AddCardInput field="targ" display="Target" value={toAdd.targ} setToAddField={setToAddField} />
+                            <AddCardInput display="English" value={toAdd.en} setValue={(val) => {
+                                setToAdd({...toAdd, en: val});
+                            }} />
+                            <AddCardInput display="Target" value={toAdd.targ} setValue={(val) => {
+                                setToAdd({...toAdd, targ: val});
+                            }} />
                         </div>
                         <div className="flex justify-between">
-                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
-                            <AddCardInput field="desc" display="Description" value={toAdd.desc} setToAddField={setToAddField} />
+                            <AddCardInput display="Definition" value={toAdd.def} setValue={(val) => {
+                                setToAdd({...toAdd, def: val});
+                            }} />
+                            <AddCardInput display="Description" value={toAdd.desc} setValue={(val) => {
+                                setToAdd({...toAdd, desc: val});
+                            }} />
                         </div>
                         <div className="flex justify-between">
-                            <AddCardSelect field="pos" display="Part of speech" value={toAdd.pos} setToAddField={setToAddField} options={{
+                            <AddCardSelect display="Part of speech" value={toAdd.pos} setValue={(val) => {
+                                setToAdd({...toAdd, pos: val})
+                            }} options={{
                                 "Don't specify": "",
                                 "Noun": "n",
                                 "Pronoun": "p",
@@ -334,22 +335,30 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                                 "Interjection": "i",
                                 "Quantifier": "q"
                             }} />
-                            <AddCardSelect field="gender" display="Gender" value={toAdd.gender} setToAddField={setToAddField} options={{
+                            <AddCardSelect display="Gender" value={toAdd.gender} setValue={(val) => {
+                                setToAdd({...toAdd, gender: val})
+                            }} options={{
                                 "Don't specify": "",
                                 "None": null,
                                 "Masculine": "m",
                                 "Feminine": "f",
                                 "Neuter": "n"
                             }} />
-                            <AddCardInput field="trans" display="Transliteration" value={toAdd.trans} setToAddField={setToAddField} defaultVal={null} />
+                            <AddCardInput display="Transliteration" value={toAdd.trans} setValue={(val) => {
+                                setToAdd({...toAdd, trans: val});
+                            }} blankValue={DEFAULTS.words.trans} />
                         </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                     </div>
                     // rule fields (make sure data is actually a rule by checking title field)
                     : (mode === "rules" && "title" in toAdd) ? <div>
                         <div className="flex justify-between">
-                            <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
-                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                            <AddCardInput display="Title" value={toAdd.title} setValue={(val) => {
+                                setToAdd({...toAdd, title: val});
+                            }} />
+                            <AddCardInput display="Definition" value={toAdd.def} setValue={(val) => {
+                                setToAdd({...toAdd, def: val});
+                            }} />
                         </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
@@ -357,8 +366,12 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                     // norm fields (make sure data is actually a norm by checking title field)
                     : (mode === "norms" && "title" in toAdd) ? <div>
                         <div className="flex justify-between">
-                            <AddCardInput field="title" display="Title" value={toAdd.title} setToAddField={setToAddField} />
-                            <AddCardInput field="def" display="Definition" value={toAdd.def} setToAddField={setToAddField} />
+                           <AddCardInput display="Title" value={toAdd.title} setValue={(val) => {
+                                setToAdd({...toAdd, title: val});
+                            }} />
+                            <AddCardInput display="Definition" value={toAdd.def} setValue={(val) => {
+                                setToAdd({...toAdd, def: val});
+                            }} />
                         </div>
                         <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
                         <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
@@ -399,7 +412,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 <button
                     className="w-full p-6 block text-3xl cursor-pointer bg-green-400"
                     onClick={() => {
-                        if (expanded) attemptAddData();
+                        if (expanded) addData();
                         else setExpanded(true);
                     }}
                 >+</button>
@@ -432,7 +445,7 @@ export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: stri
                 {/* little + button: to add a partial word/rule/norm with some nonessential fields missing */}
                 {toAddStatus === "partial" && <button
                     className="w-[84px] h-[84px] text-3xl p-6 bg-green-400 cursor-pointer"
-                    onClick={attemptAddData}
+                    onClick={addData}
                 >+</button> }
             </div>}
         </div>
