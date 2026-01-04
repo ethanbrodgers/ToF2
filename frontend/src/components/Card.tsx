@@ -16,29 +16,47 @@ enum display { DEF = "definition", DESC = "description" };
  * @param {Array<{icon: string, content: React.ReactNode}>} [props.details] - An optional array of objects representing
  * more information on the data displayed on this card. The icon field should hold an emoji used in a selection
  * bar, and the content field should store JSX that displays the desired information.
+ * @param {boolean} [props.expanded] - Whether or not this card should be expanded. Usually linked to a state
+ * variable.
+ * @param {Function} [props.onClick] - A function to call when the main body of this Card (not the expandable
+ * part) is clicked. 
  * @param {React.ReactNode} props.children - The element that will be shown on the front of the card.
  */
 export default function Card(
     {
         tags=[], 
-        details=[], 
+        details=[],
+        expanded: expandedProp,
+        onClick, 
         children
     }: {
         tags?: Array<React.ReactNode>,
         details?: Array<{icon: string, content: React.ReactNode}>,
+        expanded?: boolean,
+        onClick?: Function,
         children: React.ReactNode
     }
 ) {
-    // state
-    const [expanded, setExpanded] = React.useState(false);
-    const toggleExpanded = () => { setExpanded(!expanded) };
+    // ==== state ====
+
+    // expandedState: the main way to track whether Card is expanded. Will always be trumped by expandedProp when the latter is set.
+    const [expandedState, setExpandedState] = React.useState(false);
+    const toggleExpandedState = () => { setExpandedState(!expandedState) };
+
+    // expanded: whether this component should actually expand. Considers both expandedProp and expandedState.
+    const expanded = (expandedProp === undefined) ? expandedState : expandedProp;
+
     // index of detail being displayed
     const [detailInd, setDetailInd] = React.useState(0);
 
-    return ( <div className="w-[250px] m-3 mx-5">
+    // ==== JSX ====
+    return ( <div className="w-[250px] m-3 mx-5 bg-white">
 
         {/* flashcard */}
-        <div className="w-full h-[150px] border-2 border-gray-600 font-bold italic text-black cursor-pointer" onClick={toggleExpanded}>
+        <div className="w-full h-[150px] border-2 border-gray-600 font-bold italic text-black cursor-pointer" onClick={() => {
+            toggleExpandedState();
+            if (onClick) onClick();
+        }}>
             {children}
         </div>
         

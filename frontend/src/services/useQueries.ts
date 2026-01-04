@@ -1,7 +1,8 @@
 // useQueries.ts: defines TanStack hooks used to query the backend and manage lifecycle
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getWords, addWord, getRules, addRule, getNorms, addNorm } from './api';
+import { getWords, addWord, lookupWord, getRules, addRule, getNorms, addNorm } from './api';
+import { wordType } from '@/types';
 
 /**
  * Hook for fetching vocabulary words
@@ -60,6 +61,30 @@ export function useAddWord() {
             queryClient.invalidateQueries({queryKey: ["words"]});
         }
     })
+}
+
+/**
+ * Hook for looking up AI word completions
+ * 
+ * Usage: 
+ *   const { mutate, data, isPending } = useLookupWord();
+ * 
+ * @returns {Object} Mutation result object
+ * @returns {Function} returns.mutate - Function to execute the lookup. Usage example:
+ * mutate({desc: "formal greeting", word: incompleteWordObject});
+ * @returns {Object} returns.mutate.params - Parameters for the lookup
+ * @returns {string} returns.mutate.params.desc - Special instructions for word generation
+ * @returns {wordType} returns.mutate.params.word - Incomplete word object
+ * @returns {Array<{desc: string, word: wordType}>} returns.data - Array of completion options
+ * @returns {boolean} returns.isPending - Whether the lookup is in progress
+ * @returns {boolean} returns.isError - Whether the lookup has errored
+ * @returns {Error} returns.error - Error object if the lookup failed
+ * @returns {boolean} returns.isSuccess - Whether the lookup succeeded
+ */
+export function useLookupWord() {
+    return useMutation({
+        mutationFn: ({desc, word}: {desc: string, word: wordType}) => lookupWord(desc, word)
+    });
 }
 
 /**

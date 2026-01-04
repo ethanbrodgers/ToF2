@@ -1,36 +1,32 @@
 import React from 'react';
-import { useAddWord, useAddRule, useAddNorm } from '@/services/useQueries';
-import AddCardInput from './AddCardInput';
-import AddCardSelect from './AddCardSelect';
-import AddCardNotice from './AddCardNotice';
-import AddCardExList from './AddCardExList';
-import AddCardNotesList from './AddCardNotesList';
+import { wordType } from '@/types';
+import { useAddWord, useLookupWord, useAddRule, useAddNorm } from '@/services/useQueries';
+import AddCardFieldsPanel from './AddCardPanel-components/AddCardFieldsPanel';
+import AddCardCompletionsPanel from './AddCardPanel-components/AddCardCompletionsPanel';
+import AddCardButtonsBar from './AddCardPanel-components/AddCardButtonsBar';
 
 
 // default values for each mode
 const DEFAULTS = {
     words: {
-        lang: "es",
-        en: null,
-        targ: null,
-        def: "[None provided]",
-        pos: "n",
-        gender: null,
+        en: "",
+        targ: "",
+        def: "",
+        pos: "",
+        gender: "",
         trans: null,
-        desc: "[None provided]",
+        desc: "",
         ex: []
     },
     rules: {
-        lang: "es",
-        title: null,
-        def: "[None provided]",
+        title: "",
+        def: "",
         notes: [],
         ex: []
     },
     norms: {
-        lang: "es",
-        title: null,
-        def: "[None provided]",
+        title: "",
+        def: "",
         notes: [],
         ex: []
     }
@@ -55,213 +51,231 @@ const DEFAULTS = {
 export default function AddCardPanel({lang, setLang, mode, setMode}: {lang: string, setLang: Function, mode: string, setMode: Function}) {
     // ==== state vars ====
 
-    // state var: expanded
+    // expanded
     const [expanded, setExpanded] = React.useState(false);
-    // state var: word/rule/norm to add
+    // expanded completion index: which word/rule/norm completion is being expanded, used to collapse all others. null for no expanded completion
+    const [expandedCompletion, setExpandedCompletion] = React.useState(null);
+    // word/rule/norm to add
     const [toAdd, setToAdd] = React.useState(DEFAULTS[mode]);
     toAdd.lang = lang;
-    // state var: addData, adds word/rule/norm to backend
-    const mutateResults = {
-        words: useAddWord(),
-        rules: useAddRule(),
-        norms: useAddNorm()
-    }
-    const { mutate: addData } = mutateResults[mode];
-    // state var: notice to display
-    const [notice, setNotice]: [{
-        type: "loading" | "error" | "success", text: string, key?: any
-    }, Function] = React.useState(null);
     // effect to switch toAdd value to match a change in mode
     React.useEffect(() => {
         setToAdd(DEFAULTS[mode])
-    }, [mode]);
+    }, [mode]); 
+    // special instructions for AI
+    const [instructions, setInstructions] = React.useState("");
+    /// add-data mutators
+    const { mutate: addWord } = useAddWord();
+    const { mutate: addRule } = useAddRule();
+    const { mutate: addNorm } = useAddNorm();
+    // lookup word
+    const { mutate: lookupWord, data: lookupWordResult, isPending: lookupWordPending, reset: clearLookupWord } = useLookupWord();
+    // notice to display
+    const [notice, setNotice]: [{
+        type: "loading" | "error" | "success", text: string, key?: any
+    }, Function] = React.useState(null);
     
 
 
     // ==== helper functions ====
+
+    // pass in the property of some object (ex. missing(toAdd.en)) to see if it is missing.
+    // Counts as missing if undefined, empty string, array with no entries or a missing entry,
+    // or object with no entries or a missing entry. Recursive. Null does not count as missing.   
+    function missing(val: any): boolean {
+        if (val === null) return false;
+        if (val === undefined || val === "") return true;
+        if (typeof val === "string" && val.length === 0) return true;
+        if (Array.isArray(val)) {
+            if (val.length === 0) return true;
+            for (const elem of val) if (missing(elem)) return true;
+        }
+        if (typeof val === "object") {
+            if (Object.entries(val).length === 0) return true;
+            for (const [key, subval] of Object.entries(val)) if (missing(subval)) return true;
+        }
+        return false;
+    }
 
     // makes and displays a new notice
     function makeNotice(type: "loading" | "error" | "success", text: string) {
         setNotice({type, text, key: Date.now()});
     }
 
-    // executes plus button functionality (expand and add data)
-    function plusButtonFunc() {
-        // if collapsed: expand
-        if (!expanded) {
-            setExpanded(true);
-        } else {
-            // else, attempt to add
-            if (mode === "words") {
-                if (toAdd.en && toAdd.targ) {
-                    addData(toAdd, {
-                        // function to run when added successfully
-                        onSuccess: () => {
-                            makeNotice("success", "Word added")
-                        },
-                        // function to run when error
-                        onError: (error) => {
-                            makeNotice("error", `Error adding word: ${error.message}`);
-                        }
-                    });
-                    makeNotice("loading", "Loading...")
+    // clears all left-panel fields
+    function clearFields() {
+        setInstructions("");
+        setToAdd(DEFAULTS[mode]);
+    }
+
+        // looks up current data and displays appropriate notices
+    function lookupData() {
+        if (mode === "words") {
+            lookupWord({desc: instructions, word: toAdd}, {
+                // function to run when added successfully
+                onSuccess: () => {
+                    makeNotice("success", "Lookup complete")
+                    setExpandedCompletion(null);
+                },
+                // function to run when error
+                onError: (error) => {
+                    makeNotice("error", `Error looking up word: ${error.message}`);
                 }
-                else {
-                    console.error("Tried to add invalid word");
-                    makeNotice("error", "Word must have English and Target");
-                }
+            });
+            makeNotice("loading", "Loading (typical time: 30sec)");
+        }
+        else {
+            console.error(`Lookup not implemented for mode "${mode}"`);
+            makeNotice("error", `Lookup not implemented for mode "${mode}"`);
+        }
+    }
+
+    // clears all lookup completions, regardless of current mode
+    function clearLookup() {
+        clearLookupWord()
+        setExpandedCompletion(null);
+    }
+
+    // attempts to add the current word/rule/norm and displays corresponding notices
+    function addData() {
+        if (mode === "words") {
+            if (!missing(toAdd.en) && !missing(toAdd.targ)) {
+                addWord(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        makeNotice("success", "Word added");
+                        clearFields();
+                        clearLookup();
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        makeNotice("error", `Error adding word: ${error.message}`);
+                    }
+                });
+                makeNotice("loading", "Loading...")
             }
-            else if (mode === "rules") {
-                if (toAdd.title) {
-                    addData(toAdd, {
-                        // function to run when added successfully
-                        onSuccess: () => {
-                            makeNotice("success", "Rule added")
-                        },
-                        // function to run when error
-                        onError: (error) => {
-                            makeNotice("error", `Error adding rule: ${error.message}`);
-                        }
-                    });
-                    makeNotice("loading", "Loading...")
-                }
-                else {
-                    console.error("Tried to add invalid rule");
-                    makeNotice("error", "Rule must have title");
-                }
+            else {
+                console.error("Tried to add invalid word");
+                makeNotice("error", "Word must have English and Target");
             }
-            else if (mode === "norms") {
-                if (toAdd.title) {
-                    addData(toAdd, {
-                        // function to run when added successfully
-                        onSuccess: () => {
-                            makeNotice("success", "Norm added")
-                        },
-                        // function to run when error
-                        onError: (error) => {
-                            makeNotice("error", `Error adding norm: ${error.message}`);
-                        }
-                    });
-                    makeNotice("loading", "Loading...")
-                }
-                else {
-                    console.error("Tried to add invalid norm");
-                    makeNotice("error", "Norm must have title");
-                }
+        }
+        else if (mode === "rules") {
+            if (!missing(toAdd.title)) {
+                addRule(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        makeNotice("success", "Rule added")
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        makeNotice("error", `Error adding rule: ${error.message}`);
+                    }
+                });
+                makeNotice("loading", "Loading...")
+            }
+            else {
+                console.error("Tried to add invalid rule");
+                makeNotice("error", "Rule must have title");
+            }
+        }
+        else if (mode === "norms") {
+            if (!missing(toAdd.title)) {
+                addNorm(toAdd, {
+                    // function to run when added successfully
+                    onSuccess: () => {
+                        makeNotice("success", "Norm added")
+                    },
+                    // function to run when error
+                    onError: (error) => {
+                        makeNotice("error", `Error adding norm: ${error.message}`);
+                    }
+                });
+                makeNotice("loading", "Loading...")
+            }
+            else {
+                console.error("Tried to add invalid norm");
+                makeNotice("error", "Norm must have title");
             }
         }
     }
 
-    // modifies a field of toAdd. Usage example: setToAddField({targ: "perro""});
-    function setToAddField(obj) {
-        setToAdd({...toAdd, ...obj});
+
+    // ==== Helpful values ====
+
+    // toAdd status: "empty" means not enough information to add or look up, "incomplete" means cannot be added but can be looked up, "partial" means can be added or looked up but missing non-critical fields, "complete" means missing no fields.
+    let toAddStatus = "";
+    if (mode === "words") {
+        if (missing(toAdd.lang) || missing(toAdd.en) || missing(toAdd.targ)) {
+            if ((missing(toAdd.en) && missing(toAdd.targ) && missing(toAdd.def) && missing(toAdd.desc) && toAdd.trans == null))
+                toAddStatus = "empty";
+            else
+                toAddStatus = "incomplete";
+        }
+        else {
+            if (missing(toAdd.def) || missing(toAdd.desc) || missing(toAdd.pos) || missing(toAdd.gender) || missing(toAdd.ex))
+                toAddStatus = "partial";
+            else
+                toAddStatus = "complete";
+        }
     }
+    else if (mode === "rules") {
+        toAddStatus = (missing(toAdd.title)) ? "empty" : "complete";
+    }
+    else if (mode === "norms") {
+        toAddStatus = (missing(toAdd.title)) ? "empty" : "complete";
+    }
+
+    const lookupPending = (mode === "words" && lookupWordPending);
 
 
     // ==== JSX ====
 
-    return ( <div className="w-full">
+    return ( <div className="w-full relative">
         {/* expandable */}
         <div className="bg-gray-200 overflow-hidden transition-all border-3 border-gray-500 border-t-0" style={{
             height: (expanded) ? "400px" : "0"
         }}>
             <div className="flex h-full items-stretch">
-                {/* enter-fields panel */}
-                <div className="flex-1 relative p-4 pt-0 min-h-0 overflow-y-auto">
-                    {/* header */}
-                    <div className="flex gap-2 items-baseline mx-auto w-fit">
-                        <p className="text-5xl">Add a</p>
-                        <AddCardSelect header={true} options={{
-                            "Spanish": "es",
-                            "French": "fr",
-                            "Chinese": "zh",
-                            "Russian": "ru"
-                        }} stateVar={lang} setStateVar={setLang} />
-                        <AddCardSelect header={true} options={{
-                            "Word": "words",
-                            "Rule": "rules",
-                            "Norm": "norms"
-                        }} stateVar={mode} setStateVar={setMode} />
-                    </div>
+                {/* enter-fields panel (left) */}
+                <AddCardFieldsPanel
+                    toAdd={toAdd}
+                    setToAdd={setToAdd}
+                    DEFAULTS={DEFAULTS}
+                    instructions={instructions}
+                    setInstructions={setInstructions}
+                    clearFields={clearFields}
+                    lang={lang}
+                    setLang={setLang}
+                    mode={mode}
+                    setMode={setMode}
+                    notice={notice}
+                />
 
-                    {/* word/rule/norm fields */}
-                    {/* word fields (make sure data is actually a word by checking en field)*/}
-                    {(mode === "words" && "en" in toAdd) ? <div>
-                        <AddCardInput display="Special instructions" />
-                        <div className="flex justify-between">
-                            <AddCardInput field="en" display="English" setToAddField={setToAddField} defaultVal={null} />
-                            <AddCardInput field="targ" display="Target" setToAddField={setToAddField} defaultVal={null} />
-                        </div>
-                        <div className="flex justify-between">
-                            <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
-                            <AddCardInput field="desc" display="Description" setToAddField={setToAddField} defaultVal="[None provided]" />
-                        </div>
-                        <div className="flex justify-between">
-                            <AddCardSelect field="pos" display="Part of speech" setToAddField={setToAddField} options={{
-                                "Noun": "n",
-                                "Pronoun": "p",
-                                "Verb": "v",
-                                "Adjective": "adj",
-                                "Adverb": "adv",
-                                "Connector": "c",
-                                "Interjection": "i",
-                                "Quantifier": "q"
-                            }} />
-                            <AddCardSelect field="gender" display="Gender" setToAddField={setToAddField} options={{
-                                "None": null,
-                                "Masculine": "m",
-                                "Feminine": "f",
-                                "Neuter": "n"
-                            }} />
-                            <AddCardInput field="trans" display="Transliteration" setToAddField={setToAddField} defaultVal={null} />
-                        </div>
-                        <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
-                    </div>
-                    // rule fields (make sure data is actually a rule by checking title field)
-                    : (mode === "rules" && "title" in toAdd) ? <div>
-                        <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
-                        <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
-                        <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
-                        <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
-                    </div>
-                    // norm fields (make sure data is actually a norm by checking title field)
-                    : (mode === "norms" && "title" in toAdd) ? <div>
-                        <AddCardInput field="title" display="Title" setToAddField={setToAddField} defaultVal={null} />
-                        <AddCardInput field="def" display="Definition" setToAddField={setToAddField} defaultVal="[None provided]" />
-                        <AddCardExList toAdd={toAdd} setToAdd={setToAdd} />
-                        <AddCardNotesList toAdd={toAdd} setToAdd={setToAdd} />
-                    </div>
-                    : <p>Mode not implemented: "{mode}"</p>}
-                    
-                    
-                    {/* notice display */}
-                    <div className="absolute bottom-0 left-0 h-8">
-                        {notice && <AddCardNotice type={notice.type} key={notice.key}>{notice.text}</AddCardNotice>}
-                    </div>
-                </div>
-
-                {/* see-completions panel */}
-                <div className="flex-1 p-4">
-                    <p>[See completions goes here]</p>
-                </div>
+                {/* see-completions panel (right) */}
+                <AddCardCompletionsPanel
+                    lookupPending={lookupWordPending}
+                    lookupWordResult={lookupWordResult}
+                    expandedCompletion={expandedCompletion}
+                    setExpandedCompletion={setExpandedCompletion}
+                    setToAdd={setToAdd}
+                />
             </div>
 
         </div>
 
 
-        {/* big plus button (and x button) */}
-        <div className="relative">
-            <button
-                className="w-full p-6 bg-green-400 block text-3xl cursor-pointer"
-                onClick={plusButtonFunc}
-            >+</button>
-            { expanded && <button
-                className="absolute left-0 top-0 w-[84px] h-[84px] text-3xl p-6 bg-red-400 cursor-pointer"
-                onClick={() => {setExpanded(false)}}
-            >X</button> }
-        </div>
-        
-        
+        {/* bottom buttons */}
+        <AddCardButtonsBar
+            expanded={expanded}
+            setExpanded={setExpanded}
+            toAddStatus={toAddStatus}
+            addData={addData}
+            lookupData={lookupData}
+            lookupPending={lookupPending}
+            instructions={instructions}
+            clearFields={clearFields}
+            clearLookup={clearLookup}
+        />
     </div> );
 }
 

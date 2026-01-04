@@ -14,7 +14,9 @@ import { ruleNormType } from '@/types';
 export default function AddCardNotesList({toAdd, setToAdd}: {toAdd: ruleNormType, setToAdd: Function}) {
     return ( <div>
         <p>Notes:</p>
-        {toAdd.notes.map((note, i) => <AddCardNote toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}
+        <div className="h-24 min-h-0 overflow-y-auto border-l-2 border-gray-500">
+            {toAdd.notes.map((note, i) => <AddCardNote toAdd={toAdd} setToAdd={setToAdd} index={i} key={i} />)}
+        </div>
         <button
             className="bg-blue-400 w-6 h-6 cursor-pointer"
             onClick={() => {
