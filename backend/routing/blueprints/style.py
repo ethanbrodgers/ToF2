@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from ..utils import serialize_list
 from services import db
+from bson import ObjectId
 
 bp = Blueprint("style", __name__)
 
@@ -75,5 +76,18 @@ def set_style_norms():
 
     # Insert into database
     db["Norms"].insert_one(norm_doc)
+
+    return jsonify({"message": "success"})
+
+# Delete a style norm from MongoDB
+@bp.route("/<id_str>", methods=["DELETE"])
+def delete_style_norms(id_str):
+    collection = db["Norms"]
+    res = collection.delete_one(
+        {"_id": ObjectId(id_str)}
+    )
+
+    if res.deleted_count == 0:
+        return jsonify({"message": "no word found with given _id"}), 404
 
     return jsonify({"message": "success"})
