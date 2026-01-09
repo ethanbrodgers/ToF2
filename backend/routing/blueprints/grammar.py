@@ -57,6 +57,11 @@ def add_rule():
         return jsonify({"message": "No title field provided"}), 400
     if type(req_body["title"]) != str:
         return jsonify({"message": "Received a non-string title field"}), 400
+    if "freq" in req_body:
+        if not isinstance(req_body["freq"], (int, float)):
+            return jsonify({"message": "freq must be a number"}), 400
+        if req_body["freq"] < 0 or req_body["freq"] > 1:
+            return jsonify({"message": "freq must be between 0 and 1"}), 400
     
     # construct rule
     rule = {}
@@ -65,6 +70,7 @@ def add_rule():
     rule["def"] = req_body.get("def", "[none provided]")
     rule["notes"] = req_body.get("notes", [])
     rule["ex"] = req_body.get("ex", [])
+    rule["freq"] = req_body.get("freq", 0.5)
 
     # add
     db["Rules"].insert_one(rule)

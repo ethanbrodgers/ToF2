@@ -78,8 +78,9 @@ def add_passage():
     passage["targ"] = req_body["targ"]
     passage["lang"] = req_body["lang"]
     passage["ex"] = req_body.get("ex", [])
-    passage["title"] = req_body["title"]
-    passage["desc"] = req_body["desc"]
+    passage["title"] = req_body.get("title", "[none provided]")
+    passage["desc"] = req_body.get("desc", "[none provided]")
+    passage["freq"] = req_body.get("freq", 0.5)
 
     # add
     db["Passages"].insert_one(passage)

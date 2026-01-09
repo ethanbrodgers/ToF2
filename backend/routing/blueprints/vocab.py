@@ -120,7 +120,13 @@ def add_word():
         return jsonify({"message": "No pos field provided"}), 400
     if req_body["pos"] not in ["n", "p", "v", "adj", "adv", "c", "i", "q"]:
         return jsonify({"message": "Received a pos field not in recognized list"}), 400
-    
+    if "freq" in req_body:
+        if not isinstance(req_body["freq"], (int, float)):
+            return jsonify({"message": "freq must be a number"}), 400
+        if req_body["freq"] < 0 or req_body["freq"] > 1:
+            return jsonify({"message": "freq must be between 0 and 1"}), 400
+
+
     # construct word
     word = {}
     word["en"] = req_body["en"]
@@ -132,6 +138,7 @@ def add_word():
     word["trans"] = req_body.get("trans", None)
     word["desc"] = req_body.get("desc", "[none provided]")
     word["ex"] = req_body.get("ex", [])
+    word["freq"] = req_body.get("freq", 0.5)
 
     # add
     db["Words"].insert_one(word)
