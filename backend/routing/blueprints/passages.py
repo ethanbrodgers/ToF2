@@ -63,6 +63,10 @@ def add_passage():
         return jsonify({"message": "Received a non-string lang field"}), 400
     if len(req_body["lang"]) != 2:
         return jsonify({"message": "Received a lang field with length != 2"}), 400
+    if not req_body.get("title"):
+        return jsonify({"message": "No title field provided"}), 400
+    if type(req_body["title"]) != str:
+        return jsonify({"message": "Received a non-string title field"}), 400
     if not req_body.get("en"):
         return jsonify({"message": "No en field provided"}), 400
     if type(req_body["en"]) != str:
@@ -71,16 +75,26 @@ def add_passage():
         return jsonify({"message": "No targ field provided"}), 400
     if type(req_body["targ"]) != str:
         return jsonify({"message": "Received a non-string targ field"}), 400
+    if req_body.get("og") not in [None, "en", "targ"]:
+        return jsonify({"message": "Received an invalid og field (value must be 'en' or 'targ')"}), 400
+    if req_body.get("enAi") not in [None, True, False]:
+        return jsonify({"message": "Received an invalid enAi field (value must be boolean)"}), 400
+    if req_body.get("targAi") not in [None, True, False]:
+        return jsonify({"message": "Received an invalid targAi field (value must be boolean)"}), 400
+    if req_body.get("sentences") is not None and type(req_body.get("sentences")) is not list:
+        return jsonify({"message": "sentences field must be a list"}), 400
     
     # construct passage
     passage = {}
     passage["en"] = req_body["en"]
     passage["targ"] = req_body["targ"]
     passage["lang"] = req_body["lang"]
-    passage["ex"] = req_body.get("ex", [])
-    passage["title"] = req_body.get("title", "[none provided]")
+    passage["title"] = req_body["title"]
     passage["desc"] = req_body.get("desc", "[none provided]")
-    passage["freq"] = req_body.get("freq", 0.5)
+    passage["og"] = req_body.get("og")
+    passage["enAi"] = req_body.get("enAi")
+    passage["targAi"] = req_body.get("targAi")
+    passage["sentences"] = req_body.get("sentences", [])
 
     # add
     db["Passages"].insert_one(passage)
