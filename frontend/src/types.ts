@@ -16,6 +16,7 @@ export type wordType = {
     trans: string | null,
     desc: string,
     ex: Array<exSentenceType>
+    freq: number
 }
 
 // Since rules and norms store the exact same fields, they'll be represented by the same type
