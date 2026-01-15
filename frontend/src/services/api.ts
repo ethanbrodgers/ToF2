@@ -82,7 +82,7 @@ export async function addWord(word: wordType): Promise<void> {
 
 /**
  * Delete a vocabulary work from MongoDB.
- * @param {stirng} wordId - MongoDB-assigned id of the word to delete
+ * @param {string} wordId - MongoDB-assigned id of the word to delete
  */
 export async function deleteWord(wordId: string): Promise<void> {
     const response = await apiCall("/vocab", "DELETE", null, null, wordId);
