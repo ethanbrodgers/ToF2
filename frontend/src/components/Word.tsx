@@ -5,7 +5,8 @@ import ExSentence from './ExSentence';
 import { useDeleteWord } from '@/services/useQueries';
 
 /**
- * Displays a word from user data on the view page.
+ * Displays a word from user data on the view page. If the word has an _id, a delete
+ * icon is rendered via Card and wired to the delete mutation.
  * 
  * @param {Object} props - component props
  * 
@@ -54,4 +55,3 @@ export default function Word({word, expanded, onClick}: {word: wordType, expande
         {enTargDisplay}
     </Card> );
 }
-

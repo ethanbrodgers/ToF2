@@ -20,6 +20,8 @@ enum display { DEF = "definition", DESC = "description" };
  * variable.
  * @param {Function} [props.onClick] - A function to call when the main body of this Card (not the expandable
  * part) is clicked. 
+ * @param {Function} [props.onDelete] - Optional delete handler. When provided, a trash icon is shown in the
+ * expandable section (aligned with the tags row) and invokes this callback when clicked.
  * @param {React.ReactNode} props.children - The element that will be shown on the front of the card.
  */
 export default function Card(

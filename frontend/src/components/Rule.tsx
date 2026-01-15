@@ -5,7 +5,8 @@ import { ruleNormType } from '@/types';
 import { useDeleteRule } from '@/services/useQueries';
 
 /**
- * Displays a rule from user data on the view page.
+ * Displays a rule from user data on the view page. If the rule has an _id, a delete
+ * icon is rendered via Card and wired to the delete mutation.
  * 
  * @param {Object} props - component props
  * 

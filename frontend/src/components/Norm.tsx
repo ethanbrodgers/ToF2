@@ -5,7 +5,8 @@ import { ruleNormType } from '@/types';
 import { useDeleteNorm } from '@/services/useQueries';
 
 /**
- * Displays a norm from user data on the view page.
+ * Displays a norm from user data on the view page. If the norm has an _id, a delete
+ * icon is rendered via Card and wired to the delete mutation.
  * 
  * @param {Object} props - component props
  * 
