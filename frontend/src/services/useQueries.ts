@@ -1,7 +1,18 @@
 // useQueries.ts: defines TanStack hooks used to query the backend and manage lifecycle
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getWords, addWord, lookupWord, getRules, addRule, getNorms, addNorm } from './api';
+import {
+    getWords,
+    lookupWord,
+    addWord,
+    deleteWord,
+    getRules,
+    addRule,
+    deleteRule,
+    getNorms,
+    addNorm,
+    deleteNorm
+} from './api';
 import { wordType } from '@/types';
 
 /**
@@ -15,7 +26,7 @@ import { wordType } from '@/types';
  * @returns {boolean} returns.isError - Whether the call has errored
  * @returns {Error} returns.error - Error object if the call failed
  */
-export function useWords(lang: string) {
+export function useGetWords(lang: string) {
     /*
      * TanStack query
      * queryKey: a way of defining which queries are "the same". If two
@@ -33,6 +44,30 @@ export function useWords(lang: string) {
         queryKey: ["words", lang],
         queryFn: () => getWords(lang),
         staleTime: 5 * 60 * 1000    // 5 minutes
+    });
+}
+
+/**
+ * Hook for looking up AI word completions
+ * 
+ * Usage: 
+ *   const { mutate, data, isPending } = useLookupWord();
+ * 
+ * @returns {Object} Mutation result object
+ * @returns {Function} returns.mutate - Function to execute the lookup. Usage example:
+ * mutate({desc: "formal greeting", word: incompleteWordObject});
+ * @returns {Object} returns.mutate.params - Parameters for the lookup
+ * @returns {string} returns.mutate.params.desc - Special instructions for word generation
+ * @returns {wordType} returns.mutate.params.word - Incomplete word object
+ * @returns {Array<{desc: string, word: wordType}>} returns.data - Array of completion options
+ * @returns {boolean} returns.isPending - Whether the lookup is in progress
+ * @returns {boolean} returns.isError - Whether the lookup has errored
+ * @returns {Error} returns.error - Error object if the lookup failed
+ * @returns {boolean} returns.isSuccess - Whether the lookup succeeded
+ */
+export function useLookupWord() {
+    return useMutation({
+        mutationFn: ({ desc, word }: { desc: string, word: wordType }) => lookupWord(desc, word)
     });
 }
 
@@ -58,33 +93,33 @@ export function useAddWord() {
         mutationFn: addWord,
         // after query finishes, invalidate all cached words (regardless of lang) so the new words are fetched
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["words"]});
+            queryClient.invalidateQueries({ queryKey: ["words"] });
         }
     })
 }
 
 /**
- * Hook for looking up AI word completions
+ * Hook for deleting vocabulary words. Returns a function that can be used to make the mutation.
  * 
- * Usage: 
- *   const { mutate, data, isPending } = useLookupWord();
+ * Usage example: const { mutate } = useDeleteWord(); mutate(wordId);
  * 
  * @returns {Object} Mutation result object
- * @returns {Function} returns.mutate - Function to execute the lookup. Usage example:
- * mutate({desc: "formal greeting", word: incompleteWordObject});
- * @returns {Object} returns.mutate.params - Parameters for the lookup
- * @returns {string} returns.mutate.params.desc - Special instructions for word generation
- * @returns {wordType} returns.mutate.params.word - Incomplete word object
- * @returns {Array<{desc: string, word: wordType}>} returns.data - Array of completion options
- * @returns {boolean} returns.isPending - Whether the lookup is in progress
- * @returns {boolean} returns.isError - Whether the lookup has errored
- * @returns {Error} returns.error - Error object if the lookup failed
- * @returns {boolean} returns.isSuccess - Whether the lookup succeeded
+ * @returns {Function} returns.mutate - Function to execute the mutation
+ * @returns {string} returns.mutate.wordId - The MongoDB-assigned id of the word to delete
+ * @returns {boolean} returns.isPending - Whether the mutation is in progress
+ * @returns {boolean} returns.isError - Whether the mutation has errored
+ * @returns {Error} returns.error - Error object if the mutation failed
+ * @returns {boolean} returns.isSuccess - Whether the mutation succeeded
  */
-export function useLookupWord() {
+export function useDeleteWord() {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: ({desc, word}: {desc: string, word: wordType}) => lookupWord(desc, word)
-    });
+        mutationFn: deleteWord,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["words"] });
+        }
+    })
 }
 
 /**
@@ -98,7 +133,7 @@ export function useLookupWord() {
  * @returns {boolean} returns.isError - Whether the call has errored
  * @returns {Error} returns.error - Error object if the call failed
  */
-export function useRules(lang: string) {
+export function useGetRules(lang: string) {
     return useQuery({
         queryKey: ["rules", lang],
         queryFn: () => getRules(lang),
@@ -128,7 +163,31 @@ export function useAddRule() {
         mutationFn: addRule,
         // after query finishes, invalidate all cached rules (regardless of lang) so the new rules are fetched
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["rules"]});
+            queryClient.invalidateQueries({ queryKey: ["rules"] });
+        }
+    })
+}
+
+/**
+ * Hook for deleting grammar rules. Returns a function that can be used to make the mutation.
+ * 
+ * Usage example: const { mutate } = useDeleteRule(); mutate(ruleId);
+ * 
+ * @returns {Object} Mutation result object
+ * @returns {Function} returns.mutate - Function to execute the mutation
+ * @returns {string} returns.mutate.ruleId - The MongoDB-assigned id of the rule to delete
+ * @returns {boolean} returns.isPending - Whether the mutation is in progress
+ * @returns {boolean} returns.isError - Whether the mutation has errored
+ * @returns {Error} returns.error - Error object if the mutation failed
+ * @returns {boolean} returns.isSuccess - Whether the mutation succeeded
+ */
+export function useDeleteRule() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: deleteRule,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["rules"] });
         }
     })
 }
@@ -144,7 +203,7 @@ export function useAddRule() {
  * @returns {boolean} returns.isError - Whether the call has errored
  * @returns {Error} returns.error - Error object if the call failed
  */
-export function useNorms(lang: string) {
+export function useGetNorms(lang: string) {
     return useQuery({
         queryKey: ["norms", lang],
         queryFn: () => getNorms(lang),
@@ -174,8 +233,32 @@ export function useAddNorm() {
         mutationFn: addNorm,
         // after query finishes, invalidate all cached norms (regardless of lang) so the new norms are fetched
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["norms"]});
+            queryClient.invalidateQueries({ queryKey: ["norms"] });
         }
     })
 }
 
+/**
+ * Hook for deleting style norms. Returns a function that can be used to
+ * make the mutation.
+ * 
+ * Usage example: const { mutate } = useDeleteNorm(); mutate(normId);
+ * 
+ * @returns {Object} Mutation result object
+ * @returns {Function} returns.mutate - Function to execute the mutation
+ * @returns {string} returns.mutate.normId - The MongoDB-assigned id of the norm to delete
+ * @returns {boolean} returns.isPending - Whether the mutation is in progress
+ * @returns {boolean} returns.isError - Whether the mutation has errored
+ * @returns {Error} returns.error - Error object if the mutation failed
+ * @returns {boolean} returns.isSuccess - Whether the mutation succeeded
+ */
+export function useDeleteNorm() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: deleteNorm,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["norms"] });
+        }
+    })
+}
