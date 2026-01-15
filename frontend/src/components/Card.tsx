@@ -28,12 +28,14 @@ export default function Card(
         details=[],
         expanded: expandedProp,
         onClick, 
+        onDelete,
         children
     }: {
         tags?: Array<React.ReactNode>,
         details?: Array<{icon: string, content: React.ReactNode}>,
         expanded?: boolean,
         onClick?: Function,
+        onDelete?: Function,
         children: React.ReactNode
     }
 ) {
@@ -53,7 +55,7 @@ export default function Card(
     return ( <div className="w-[250px] m-3 mx-5 bg-white">
 
         {/* flashcard */}
-        <div className="w-full h-[150px] border-2 border-gray-600 font-bold italic text-black cursor-pointer" onClick={() => {
+        <div className="relative w-full h-[150px] border-2 border-gray-600 font-bold italic text-black cursor-pointer" onClick={() => {
             toggleExpandedState();
             if (onClick) onClick();
         }}>
@@ -64,11 +66,26 @@ export default function Card(
         {expanded && <div className="border-2 border-gray-600 border-t-0">
 
             {/* tags */}
-            {tags.length > 0 && <div className="flex p-2 gap-2 border-b-2 border-gray-600">
-                {tags.map(
-                    (tag, i) => <div key={i}>{tag}</div>
-                )}
-            </div>}
+            {(tags.length > 0 || onDelete) && (
+                <div className="flex items-center justify-between p-2 border-b-2 border-gray-600">
+                    <div className="flex gap-2">
+                        {tags.map(
+                            (tag, i) => <div key={i}>{tag}</div>
+                        )}
+                    </div>
+                    {onDelete && (
+                        <img
+                            src="/trash.svg"
+                            alt="trash icon"
+                            className="w-5 h-5 cursor-pointer"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(); // even though Card.tsx has no knowledge of what is passed in, the function was created with knowledge of the object and _id it should delete
+                            }}
+                        />
+                    )}
+                </div>
+            )}
 
             {/* options bar of info to view, ex. definition */}
             {details.length > 0 && <div>
