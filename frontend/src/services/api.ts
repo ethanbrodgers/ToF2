@@ -5,10 +5,10 @@ Any component that needs a backend connection should import a function from this
 
 import { wordType, ruleNormType } from "../types";
 
-
 // ===== Internal use =====
 
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT
+const BACKEND_URL = `http://localhost:${BACKEND_PORT}`;
 
 // backend call logic: Input all info for request, outputs promise resolving to response object
 async function apiCall(
@@ -58,6 +58,8 @@ async function apiCall(
 
 // ===== Exports =====
 
+// --- Word ---
+
 export async function getWords(lang: string): Promise<Array<wordType>> {
     return apiCall("/vocab", "GET", null, {lang: lang}, null)
     .then(response => response.json())
@@ -76,6 +78,19 @@ export async function addWord(word: wordType): Promise<void> {
             throw new Error(message);
         }
     });
+}
+
+/**
+ * Delete a vocabulary work from MongoDB.
+ * @param {string} wordId - MongoDB-assigned id of the word to delete
+ */
+export async function deleteWord(wordId: string): Promise<void> {
+    const response = await apiCall("/vocab", "DELETE", null, null, wordId);
+
+    if (!response.ok) {
+        const message = (await response.json()).message;
+        throw new Error(message);
+    }
 }
 
 /**
@@ -105,6 +120,8 @@ export async function lookupWord(desc: string, word: wordType): Promise<Array<{d
     .then(response => response.choices);
 }
 
+// --- Rule ---
+
 export async function getRules(lang: string): Promise<Array<ruleNormType>> {
     return apiCall("/grammar", "GET", null, {lang: lang}, null)
     .then(response => response.json())
@@ -125,6 +142,21 @@ export async function addRule(rule: ruleNormType): Promise<void> {
     });
 }
 
+/**
+ * Delete a rule from MongoDB.
+ * @param {string} ruleId - MongoDB-assigned id of the rule to delete
+ */
+export async function deleteRule(ruleId: string): Promise<void> {
+    const response = await apiCall("/grammar", "DELETE", null, null, ruleId);
+
+    if (!response.ok) {
+        const message = (await response.json()).message;
+        throw new Error(message);
+    }
+}
+
+// --- Norm ---
+
 export async function getNorms(lang: string): Promise<Array<ruleNormType>> {
     return apiCall("/style", "GET", null, {lang: lang}, null)
     .then(response => response.json())
@@ -143,4 +175,17 @@ export async function addNorm(norm: ruleNormType): Promise<void> {
             throw new Error(message);
         }
     });
+}
+
+/**
+ * Delete a style norm from MongoDB.
+ * @param {string} normId - The MongoDB-assignd id of the norm to delete
+ */
+export async function deleteNorm(normId: string): Promise<void> {
+    const response = await apiCall("/style", "DELETE", null, null, normId);
+
+    if (!response.ok) {
+        const message = (await response.json()).message;
+        throw new Error(message);
+    }
 }

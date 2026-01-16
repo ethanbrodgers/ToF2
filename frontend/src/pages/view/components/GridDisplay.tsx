@@ -3,7 +3,7 @@ import Word from '../../../components/Word';
 import Rule from '../../../components/Rule';
 import Norm from '../../../components/Norm';
 // "@" has been set up as an alias for frontend/src
-import { useWords, useRules, useNorms } from '@/services/useQueries';
+import { useGetWords, useGetRules, useGetNorms } from '@/services/useQueries';
 import { wordType } from '@/types';
 import { ruleNormType } from '@/types';
 
@@ -19,16 +19,16 @@ import { ruleNormType } from '@/types';
  * 
  * @param {str} props.lang - the ISO language code for the target language to display
  */
-export default function GridDisplay({mode, lang}: {mode: string, lang: string}) {
+export default function GridDisplay({ mode, lang }: { mode: string, lang: string }) {
     // ==== get data ====
 
     // call all hooks (React requires the hook calls to be the same every time)
     const queryResults = {
-        words: useWords(lang),
-        rules: useRules(lang),
-        norms: useNorms(lang)
+        words: useGetWords(lang),
+        rules: useGetRules(lang),
+        norms: useGetNorms(lang)
     }
-    
+
     // state variable: stores array of words, rules, etc.
     const { data, isLoading, isError, error } = queryResults[mode];
 

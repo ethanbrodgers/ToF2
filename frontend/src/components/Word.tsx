@@ -2,9 +2,11 @@ import { wordType } from '@/types';
 import Card from '@/components/Card'
 import WordFlag from "./WordFlag";
 import ExSentence from './ExSentence';
+import { useDeleteWord } from '@/services/useQueries';
 
 /**
- * Displays a word from user data on the view page.
+ * Displays a word from user data on the view page. If the word has an _id, a delete
+ * icon is rendered via Card and wired to the delete mutation.
  * 
  * @param {Object} props - component props
  * 
@@ -45,11 +47,11 @@ export default function Word({word, expanded, onClick}: {word: wordType, expande
         <p className="w-full text-right  z-1">{word.targ}</p>
     </div>
 
-
+    // draw out mutate function as callback and rename it
+    const { mutate: deleteWord } = useDeleteWord(); 
 
     // ==== jsx ====
-    return ( <Card tags={tags} details={details} expanded={expanded} onClick={onClick}>
+    return ( <Card tags={tags} details={details} expanded={expanded} onClick={onClick} onDelete={word._id ? () => deleteWord(word._id) : undefined}>
         {enTargDisplay}
     </Card> );
 }
-

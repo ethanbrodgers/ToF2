@@ -2,9 +2,11 @@ import React from 'react';
 import Card from '@/components/Card';
 import ExSentence from './ExSentence';
 import { ruleNormType } from '@/types';
+import { useDeleteNorm } from '@/services/useQueries';
 
 /**
- * Displays a norm from user data on the view page.
+ * Displays a norm from user data on the view page. If the norm has an _id, a delete
+ * icon is rendered via Card and wired to the delete mutation.
  * 
  * @param {Object} props - component props
  * 
@@ -26,7 +28,9 @@ export default function Norm({ norm }: {norm: ruleNormType, key?: any}) {
         </div> }
     ]
 
-    return ( <Card details={details}>
+    const { mutate: deleteNorm } = useDeleteNorm();
+
+    return ( <Card details={details} onDelete={norm._id ? () => {deleteNorm(norm._id)} : undefined}>
         <div className="w-full h-full flex justify-center items-center">
             <p className="text-center p-2">{norm.title}</p>
         </div>

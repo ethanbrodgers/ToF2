@@ -34,3 +34,5 @@ frontend/.env.local
 
 # test folder
 tests/
+
+.env
